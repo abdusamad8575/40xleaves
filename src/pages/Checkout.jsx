@@ -115,9 +115,11 @@ const Checkout = () => {
                         <img src={product.image} alt={product.name} className="img-fluid" />
                       </div>
                       <div className="col-md-6">
-                        <h6>{product.name}</h6>
+                        <h5 className='fw-bold text-muted '>{product.name}</h5>
                         <p className='text-muted'>Microgreen</p>
-                        <p>Price: ₹{product.price}</p>
+                        <p className='fw-bold'>₹{product.price}</p>
+                        <span className='m-1 text-muted text-decoration-line-through '>₹999</span>
+                          <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
                       </div>
                       <div className="col-md-3">
                         <div className="input-group">
@@ -175,7 +177,7 @@ const Checkout = () => {
                       onChange={() => setPaymentOption('razorpay')}
                     />
                     <label className="form-check-label fw-bold " htmlFor="razorpayOption">
-                      Razorpay
+                      Online Payment
                     </label>
                     <p className='text-muted'>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
                   </div>

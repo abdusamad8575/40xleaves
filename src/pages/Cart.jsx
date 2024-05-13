@@ -66,10 +66,10 @@ function Cart() {
   const totalAfterDiscount = totalBeforeDiscount - discount - deliveryCharges;
 
   return (
-  <>
-        <TopNav/>
-     <MiddleNav/>
-     <MainNav/> 
+    <>
+      <TopNav />
+      <MiddleNav />
+      <MainNav />
       <div className="container my-5">
         <h1 className="text-success mb-4 text-center ">
           <i className="fas fa-shopping-cart me-2"></i> Cart
@@ -87,55 +87,47 @@ function Cart() {
           <div className="row">
             <div className="col-md-8">
               {cartItems.map(item => (
-                <div key={item.id} className="card mb-3 border-success p-3 shadow  ">
+                <div key={item.id} className="card mb-3 border-success p-3 shadow">
                   <div className="row g-0">
-                    <div className="col-md-2 text-center ">
+                    <div className="col-md-4 col-5 d-flex align-items-center ">
                       <img
                         src={item.image}
                         className="img-fluid rounded"
                         alt={item.name}
                       />
                     </div>
-                    <div className="col-md-7">
+                    <div className="col-md-8 col-7">
                       <div className="card-body">
                         <h5 className="card-title text-success">{item.name}</h5>
                         <p className='text-muted'>Microgreen</p>
-                        <p className="card-text">Price: ₹{item.price}</p>
-                        <p></p>
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="d-flex flex-column align-items-center justify-content-center h-100">
-                        <div className="d-flex justify-content-center mb-2">
+                        <p className="card-text fw-bold ">₹{item.price}</p>
+                        <span className='m-1 text-muted text-decoration-line-through'>₹999</span>
+                        <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
+                        <div className="d-flex align-items-center justify-content-between mt-3">
+                          <div className="d-flex justify-content-center align-items-center ">
+                            <button
+                              className="btn btn-outline-success rounded-circle"
+                              onClick={() => handleQuantityChange(item.id, 'decrement')}
+                              disabled={item.quantity === 1}
+                            >
+                              <i className="fas fa-minus"></i>
+                            </button>
+                            <span className="mx-3 fw-bold">{item.quantity}</span>
+                            <button
+                              className="btn btn-outline-success rounded-circle"
+                              onClick={() => handleQuantityChange(item.id, 'increment')}
+                            >
+                              <i className="fas fa-plus"></i>
+                            </button>
+                          </div>
+                        <div>
                           <button
-                            className="btn btn-outline-success rounded-circle"
-                            onClick={() =>
-                              handleQuantityChange(item.id, 'decrement')
-                            }
-                            disabled={item.quantity === 1}
-                          >
-                            <i className="fas fa-minus"></i>
-                          </button>
-                          <span className="mx-3 fw-bold">{item.quantity}</span>
-                          <button
-                            className="btn btn-outline-success rounded-circle"
-                            onClick={() =>
-                              handleQuantityChange(item.id, 'increment')
-                            }
-                          >
-                            <i className="fas fa-plus"></i>
-                          </button>
+                            className="btn btn-outline-danger rounded-pill ms-2 "
+                            onClick={() => handleRemoveItem(item.id)}
+                          ><i className="fas fa-trash"></i></button>
                         </div>
-  
-                        <p className="card-text mt-2 fw-bold">
-                          Total: ₹{(item.price * item.quantity).toFixed(2)}
-                        </p>
-                        <button
-                          className="btn btn-outline-danger rounded-pill px-3"
-                          onClick={() => handleRemoveItem(item.id)}
-                        >
-                          <i className="fas fa-trash me-2"></i>Remove
-                        </button>
+                        </div>
+                         
                       </div>
                     </div>
                   </div>
@@ -143,7 +135,7 @@ function Cart() {
               ))}
             </div>
             <div className="col-md-4">
-              <div className="card bg-light border-success shadow ">
+              <div className="card bg-light border-success shadow">
                 <div className="card-body">
                   <h5 className="card-title text-success">
                     <i className="fas fa-receipt me-2"></i>Order Summary
@@ -151,7 +143,7 @@ function Cart() {
                   <div>
                     <p>Price: ₹{subtotal.toFixed(2)}</p>
                     <p>Discount: ₹{discount}</p>
-                    <p>Delivery Charges:  ₹{deliveryCharges}</p>
+                    <p>Delivery Charges: ₹{deliveryCharges}</p>
                     <hr />
                     <p className="card-text fw-bold">
                       Total Amount: ₹{totalAfterDiscount.toFixed(2)}
@@ -168,8 +160,8 @@ function Cart() {
           </div>
         )}
       </div>
-      <Footer/>
-  </>
+      <Footer />
+    </>
   );
 }
 

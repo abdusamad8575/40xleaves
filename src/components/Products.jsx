@@ -47,13 +47,17 @@ function Products() {
             <Col>
               <Slider {...settings}>
                 {items.map(item => (
-                  <div key={item.id} className='d-flex justify-content-center text-center p-3  '>
+                  <div key={item.id} className='d-flex justify-content-center p-2'>
                     <div className='shadow p-3 bg-white rounded' style={{padding:'10px',width:"80%"}}>
                       <Link to={'/product'}><img src={item.imageUrl} alt={item.name} className="img-fluid mx-auto mb-2" style={{mixBlendMode:'multiply'}}/></Link>
-                     <Link to={'/product'}> <h5 className='text-dark'>{item.name}</h5></Link>
+                     <Link to={'/product'}> <h5 className='text-muted'>{item.name}</h5></Link>
                       <p className='fw-bold m-1'>₹{item.price}</p>
-                      <p>{item.quantity} gm</p>
-                    <div className='d-flex justify-content-around'>  
+                     <div> 
+                      <span className='m-1 text-muted text-decoration-line-through '>₹999</span>
+                      <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
+                      </div>
+                      <p className='fw-bold'>{item.quantity} gm</p>
+                    <div className='d-flex justify-content-between'>  
                    <Link to={'/wishlist'}>
                       <button className='btn btn-success rounded-3'>
                         <i class="fa-solid fa-heart"></i>

@@ -13,12 +13,12 @@ const Allproducts = () => {
   const [sortOption, setSortOption] = useState('');
 
   const products = [
-    { id: 1, name: 'Product 1', imageUrl: 'https://t3.ftcdn.net/jpg/06/25/41/12/240_F_625411283_dlpdiRmZxoptmfMX1NNh6jmIv4t3pwK3.jpg', price: 120, quantity: 500, category: 'Category A', rating: 4 },
-    { id: 2, name: 'Product 2', imageUrl: 'https://t3.ftcdn.net/jpg/06/66/74/62/240_F_666746258_1AXo03QTBbKAZi6WFDnb3msBkTLIObqk.jpg', price: 150, quantity: 500, category: 'Category B', rating: 3 },
-    { id: 3, name: 'Product 3', imageUrl: 'https://t4.ftcdn.net/jpg/06/83/41/17/240_F_683411706_zX1jW7hz5SHMO5CCHfuCk3Hcp9NfPlef.jpg', price: 180, quantity: 500, category: 'Category A', rating: 5 },
-    { id: 4, name: 'Product 4', imageUrl: 'https://t3.ftcdn.net/jpg/06/99/07/80/240_F_699078038_KP59bO8zGU2U19722SParQzr87yyoVDQ.jpg', price: 200, quantity: 600, category: 'Category C', rating: 4 },
-    { id: 5, name: 'Product 5', imageUrl: 'https://t3.ftcdn.net/jpg/07/04/24/42/240_F_704244214_X8pLFeamlxLbD4bIvikLm3EIbydU2zey.jpg', price: 250, quantity: 700, category: 'Category B', rating: 3 },
-    { id: 6, name: 'Product 6', imageUrl: 'https://t4.ftcdn.net/jpg/06/44/13/05/240_F_644130539_sjQPCYRXepzDmDvdFZ8juoeBTWiUxRfj.jpg', price: 350, quantity: 750, category: 'Category c', rating: 4 },
+    { id: 1, name: 'Radish White Microgreen seeds', imageUrl: 'https://t3.ftcdn.net/jpg/06/25/41/12/240_F_625411283_dlpdiRmZxoptmfMX1NNh6jmIv4t3pwK3.jpg', price: 120, quantity: 500, category: 'Category A', rating: 4 },
+    { id: 2, name: 'Radish White Microgreen seeds', imageUrl: 'https://t3.ftcdn.net/jpg/06/66/74/62/240_F_666746258_1AXo03QTBbKAZi6WFDnb3msBkTLIObqk.jpg', price: 150, quantity: 500, category: 'Category B', rating: 3 },
+    { id: 3, name: 'Radish White Microgreen seeds', imageUrl: 'https://t4.ftcdn.net/jpg/06/83/41/17/240_F_683411706_zX1jW7hz5SHMO5CCHfuCk3Hcp9NfPlef.jpg', price: 180, quantity: 500, category: 'Category A', rating: 5 },
+    { id: 4, name: 'Radish White Microgreen seeds', imageUrl: 'https://t3.ftcdn.net/jpg/06/99/07/80/240_F_699078038_KP59bO8zGU2U19722SParQzr87yyoVDQ.jpg', price: 200, quantity: 600, category: 'Category C', rating: 4 },
+    { id: 5, name: 'Radish White Microgreen seeds', imageUrl: 'https://t3.ftcdn.net/jpg/07/04/24/42/240_F_704244214_X8pLFeamlxLbD4bIvikLm3EIbydU2zey.jpg', price: 250, quantity: 700, category: 'Category B', rating: 3 },
+    { id: 6, name: 'Radish White Microgreen seeds', imageUrl: 'https://t4.ftcdn.net/jpg/06/44/13/05/240_F_644130539_sjQPCYRXepzDmDvdFZ8juoeBTWiUxRfj.jpg', price: 350, quantity: 750, category: 'Category c', rating: 4 },
   ];
 
   const handleSearch = (e) => {
@@ -146,12 +146,19 @@ const Allproducts = () => {
                       <Link to={'/product'}>
                       <img src={item.imageUrl} className="card-img-top" alt={item.name} /></Link>                  
                       <div className="card-body">
-                      <h5 className="card-title">{item.name}</h5>
-                      <p className="card-text">
-                        <span className="fw-bold">₹{item.price}</span> &nbsp;
-                        <span className="text-muted">{item.quantity} gm</span>
+                      <h5 className="card-title text-muted fw-bold">{item.name}</h5>
+                      <p className="card-text m-0">
+                        <span className="fw-bold">₹{item.price}</span>
                       </p>
-                      
+                      <div className='d-flex justify-content-between '>
+                        
+                        <div>
+                            <span className='m-1 text-muted text-decoration-line-through '>₹999</span>
+                          <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
+                        </div>
+                          <p className="text-muted">{item.quantity} gm</p>
+                        
+                      </div>
                       <div className="d-flex justify-content-between align-items-center">
                       <Link to={'/wishlist'}>
                           <button className="btn btn-outline-success rounded-pill">

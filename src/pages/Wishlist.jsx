@@ -9,21 +9,21 @@ function Wishlist() {
     const [wishlistItems, setWishlistItems] = useState([
         {
           id: 1,
-          name: 'Product 1',
+          name: 'Radish White Microgreen seeds',
           imageUrl: 'https://t3.ftcdn.net/jpg/00/70/62/06/240_F_70620687_WyyZOfm8R6qXU9bWio8VbEXGSX4eX1eu.jpg',
           price: '120',
           quantity: '500'
         },
         {
           id: 2,
-          name: 'Product 2',
+          name: 'Radish White Microgreen seeds',
           imageUrl: 'https://t3.ftcdn.net/jpg/03/40/37/62/240_F_340376293_8KKAtyMn6badZqrCMRajj576ckJoz7Tx.jpg',
           price: '150',
           quantity: '500'
         },
         {
           id: 3,
-          name: 'Product 3',
+          name: 'Radish White Microgreen seeds',
           imageUrl: 'https://t4.ftcdn.net/jpg/03/88/04/41/240_F_388044101_IidJjwi2bonGwWDGZZqgPz7oxaowhsjp.jpg',
           price: '180',
           quantity: '500'
@@ -69,11 +69,16 @@ function Wishlist() {
                   />
                 </div>
                 <div className="card-body p-3">
-                  <h5 className="card-title mb-2">{item.name}</h5>
-                  <p className="card-text mb-1">
-                    <span className="fw-bold">₹{item.price}</span> &nbsp;
-                    <span className="text-muted">{item.quantity} gm</span>
-                  </p>
+                  <h5 className="card-title mb-2 fw-bold text-muted">{item.name}</h5>
+                  <div className='d-flex justify-content-between '>
+                        
+                        <div>
+                            <span className='m-1 text-muted text-decoration-line-through '>₹999</span>
+                          <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
+                        </div>
+                          <p className="text-muted">{item.quantity} gm</p>
+                        
+                      </div>
                   <div className="d-flex justify-content-between align-items-center">
                     <button
                       className="btn btn-outline-success rounded-pill"
