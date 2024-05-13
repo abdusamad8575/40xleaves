@@ -32,7 +32,7 @@ function Category() {
       <Container>
         <Row className='d-flex justify-content-center align-content-center '>
           {categories.map((category, index) => (
-            <Col key={index} md={6} lg={3} className="category-item">
+            <Col key={index} sm={6}  md={6} lg={3} className="category-item">
               <div className="category-content text-center shadow mt-3 rounded " style={{height:'300px'}} >
                 <img src={category.imageUrl} alt={category.name} className="img-fluid rounded"/>
                 <h5 className='text-center fw-bold '>{category.name}</h5>
