@@ -1,0 +1,105 @@
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
+import TopNav from '../components/TopNav';
+import MiddleNav from '../components/MiddleNav';
+import MainNav from '../components/MainNav';
+import Footer from '../components/Footer';
+
+function Wishlist() {
+    const [wishlistItems, setWishlistItems] = useState([
+        {
+          id: 1,
+          name: 'Product 1',
+          imageUrl: 'https://t3.ftcdn.net/jpg/00/70/62/06/240_F_70620687_WyyZOfm8R6qXU9bWio8VbEXGSX4eX1eu.jpg',
+          price: '120',
+          quantity: '500'
+        },
+        {
+          id: 2,
+          name: 'Product 2',
+          imageUrl: 'https://t3.ftcdn.net/jpg/03/40/37/62/240_F_340376293_8KKAtyMn6badZqrCMRajj576ckJoz7Tx.jpg',
+          price: '150',
+          quantity: '500'
+        },
+        {
+          id: 3,
+          name: 'Product 3',
+          imageUrl: 'https://t4.ftcdn.net/jpg/03/88/04/41/240_F_388044101_IidJjwi2bonGwWDGZZqgPz7oxaowhsjp.jpg',
+          price: '180',
+          quantity: '500'
+        },
+      ]);
+
+      const handleRemoveFromWishlist = (itemId) => {
+        const updatedWishlistItems = wishlistItems.filter((item) => item.id !== itemId);
+        setWishlistItems(updatedWishlistItems);
+      };
+    
+      const handleAddToCart = (item) => {
+        // Implement your logic to add the item to the cart here
+        console.log('Adding to cart:', item);
+      };
+  return (
+  <>
+      <TopNav/>
+     <MiddleNav/>
+     <MainNav/> 
+      <div className="container py-5">
+      <h2 className="text-center mb-4">My Wishlist</h2>
+      {wishlistItems.length === 0 ? (
+          <div className='text-center'>
+            <p className="text-center">Your wishlist is empty.</p>
+            <Link to={'/allproducts'}>
+            <button className="btn btn-success">
+              <i className="fas fa-plus me-2"></i>Add Items
+            </button>
+         </Link>
+          </div>
+      ) : (
+        <div className="row">
+          {wishlistItems.map((item) => (
+            <div key={item.id} className="col-md-4 mb-4">
+              <div className="card h-100 border">
+                <div className="card-img-top text-center ">
+                  <img
+                    src={item.imageUrl}
+                    alt={item.name}
+                    className="img-fluid"
+                    style={{ maxHeight: '200px', objectFit: 'contain' }}
+                  />
+                </div>
+                <div className="card-body p-3">
+                  <h5 className="card-title mb-2">{item.name}</h5>
+                  <p className="card-text mb-1">
+                    <span className="fw-bold">₹{item.price}</span> &nbsp;
+                    <span className="text-muted">{item.quantity} gm</span>
+                  </p>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <button
+                      className="btn btn-outline-success rounded-pill"
+                      onClick={() => handleRemoveFromWishlist(item.id)}
+                    >
+                      Remove
+                    </button>
+                   <Link to={'/cart'}>
+                      <button
+                        className="btn btn-success rounded-pill"
+                        onClick={() => handleAddToCart(item)}
+                      >
+                        Add to Cart
+                      </button>
+                   </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      </div>
+      <Footer/>
+  </>
+  )
+}
+
+export default Wishlist
