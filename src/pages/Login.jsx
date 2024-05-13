@@ -36,13 +36,13 @@ const Login = () => {
       <div className="container p-5 mt-5">
         <div className="">
           <Row>
-            <Col>
+            <Col md={6} className='d-none d-md-block '>
               <img
                 src="https://images.unsplash.com/photo-1504541891213-1b1dfdadb739?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8MTV8MjEwMDExNXx8ZW58MHx8fHx8"
                 alt="" style={{width:'100%'}}
               />
             </Col>
-            <Col className='shadow p-3'>
+            <Col className='shadow p-3' md={6}>
               <div className='text-center'>
                 <h3>Login</h3>
                 <p> Unlocking Doors to Innovation </p>
