@@ -48,7 +48,7 @@ function Register() {
             </div>
             <div>
               <FloatingLabel
-                controlId="floatingInput"
+                controlId="floatingname"
                 label="Username"
                 className="mb-3"
               >

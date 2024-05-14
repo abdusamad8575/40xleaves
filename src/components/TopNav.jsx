@@ -9,8 +9,8 @@ function TopNav() {
              <p className='fw-bold '>Delivering in Trivandrum & Kochi</p>
             </div>
             <div className='social-media'>
-               <a href="" className='me-3 text-danger'><i class="fa-brands fa-instagram"></i></a>
-               <a href="" className='text-primary'><i class="fa-brands fa-facebook"></i></a>
+               <a href="" className='me-3 text-danger'><i className="fa-brands fa-instagram"></i></a>
+               <a href="" className='text-primary'><i className="fa-brands fa-facebook"></i></a>
             </div>
         </div>
     </div>

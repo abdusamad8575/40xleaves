@@ -21,6 +21,7 @@ import Profile from './pages/Profile';
 import ProfileInfo from './pages/ProfileInfo';
 import ManageAddress from './pages/ManageAddress';
 import Orders from './pages/Orders';
+import SingleOrder from './pages/SingleOrder';
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
       <Route path='/profileinfo' element={<ProfileInfo/>}/>
       <Route path='/manageaddress' element={<ManageAddress/>}/>
       <Route path='/order' element={<Orders/>}/>
+      <Route path='/ordertrack' element={<SingleOrder/>}/>
       <Route path='*' element={<PageNotFound/>}/>
      </Routes>
  

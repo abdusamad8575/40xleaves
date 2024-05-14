@@ -60,7 +60,7 @@ function Products() {
                     <div className='d-flex justify-content-between'>  
                    <Link to={'/wishlist'}>
                       <button className='btn btn-success rounded-3'>
-                        <i class="fa-solid fa-heart"></i>
+                        <i className="fa-solid fa-heart"></i>
                      </button>
                    </Link>
                      <Link to={'/cart'}> <button className='btn btn-success rounded-3'><i className="fas fa-shopping-cart"></i></button></Link>
