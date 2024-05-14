@@ -17,6 +17,10 @@ import PageNotFound from './pages/PageNotFound';
 import Product from './pages/Product';
 import Register from './pages/Register';
 import Wishlist from './pages/Wishlist';
+import Profile from './pages/Profile';
+import ProfileInfo from './pages/ProfileInfo';
+import ManageAddress from './pages/ManageAddress';
+import Orders from './pages/Orders';
 
 
 function App() {
@@ -35,6 +39,10 @@ function App() {
       <Route path='/Checkout' element={<Checkout/>}/>
       <Route path='/login' element={<Login/>}/>
       <Route path='/register' element={<Register/>}/>
+      <Route path='/profile' element={<Profile/>}/>
+      <Route path='/profileinfo' element={<ProfileInfo/>}/>
+      <Route path='/manageaddress' element={<ManageAddress/>}/>
+      <Route path='/order' element={<Orders/>}/>
       <Route path='*' element={<PageNotFound/>}/>
      </Routes>
  

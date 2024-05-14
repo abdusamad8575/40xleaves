@@ -35,25 +35,25 @@ function Product() {
   const similarProducts = [
     {
       id: 1,
-      name: 'Product 1',
+      name: 'Radish White Microgreen seeds',
       image: 'https://t4.ftcdn.net/jpg/03/88/04/41/240_F_388044101_IidJjwi2bonGwWDGZZqgPz7oxaowhsjp.jpg',
       price: 1999,
     },
     {
       id: 2,
-      name: 'Product 2',
+      name: 'Radish White Microgreen seeds',
       image: 'https://t4.ftcdn.net/jpg/03/88/04/41/240_F_388044101_IidJjwi2bonGwWDGZZqgPz7oxaowhsjp.jpg',
       price: 2499,
     },
     {
       id: 3,
-      name: 'Product 3',
+      name: 'Radish White Microgreen seeds',
       image: 'https://t4.ftcdn.net/jpg/03/88/04/41/240_F_388044101_IidJjwi2bonGwWDGZZqgPz7oxaowhsjp.jpg',
       price: 2999,
     },
     {
       id: 4,
-      name: 'Product 4',
+      name: 'Radish White Microgreen seeds',
       image: 'https://t4.ftcdn.net/jpg/03/88/04/41/240_F_388044101_IidJjwi2bonGwWDGZZqgPz7oxaowhsjp.jpg',
       price: 3999,
     },
@@ -191,16 +191,18 @@ function Product() {
       <h3 className="mb-4">Similar Products</h3>
       <Slider {...settings}>
         {similarProducts.map(item => (
-          <div key={item.id} className="d-flex justify-content-center text-center p-3">
+          <div key={item.id} className="d-flex justify-content-center p-3">
             <div className="shadow p-3 bg-white rounded" style={{  width: "80%" }}>
               <Link to={'/product'}><Image src={item.image} alt={item.name} fluid className="mx-auto mb-2" style={{ mixBlendMode: 'multiply' }} /></Link>
-              <Link to={'/product'}><h5>{item.name}</h5></Link>
+              <Link to={'/product'} className='text-muted fw-bold '><h6>{item.name}</h6></Link>
               <p className="fw-bold m-1">₹{item.price}</p>
-              <div className="d-flex justify-content-around">
+              <span className='m-1 text-muted text-decoration-line-through'>₹999</span>
+              <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
+              <div className="d-flex justify-content-between mt-3 ">
                 <button className="btn btn-success rounded-3">
                   <i className="fa-solid fa-heart"></i>
                 </button>
-                <button className="btn btn-outline-success rounded-3">Add to cart</button>
+                <button className="btn btn-outline-success rounded-3"><i className="fas fa-shopping-cart"></i></button>
               </div>
             </div>
           </div>

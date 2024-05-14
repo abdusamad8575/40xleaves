@@ -63,7 +63,7 @@ function Products() {
                         <i class="fa-solid fa-heart"></i>
                      </button>
                    </Link>
-                     <Link to={'/cart'}> <button className='btn btn-success rounded-3'>Add</button></Link>
+                     <Link to={'/cart'}> <button className='btn btn-success rounded-3'><i className="fas fa-shopping-cart"></i></button></Link>
                   </div>
                     </div>
                   </div>
