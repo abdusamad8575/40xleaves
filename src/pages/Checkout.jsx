@@ -80,9 +80,9 @@ const Checkout = () => {
       <div className="container mt-5">
         <div className="row justify-content-center">
           <div className="col-lg-8">
-            <div className="progress mb-4">
+            {/* <div className="progress mb-4">
               <div className="progress-bar bg-success" role="progressbar" style={{ width: `${progressPercentage}%` }} aria-valuenow={progressPercentage} aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
+            </div> */}
             {currentStep === 1 && (
               <div className="card mb-4">
                 <div className="card-header bg-success text-white">

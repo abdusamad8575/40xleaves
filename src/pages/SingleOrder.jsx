@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
 import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
 import MainNav from '../components/MainNav';
@@ -13,11 +13,32 @@ function SingleOrder() {
   // Sample data from backend, you should replace this with your actual data fetching logic
   const dataFromBackend = {
     status: 'out_for_delivery', // Change this status to see the progress bar move
+    orderDetails: {
+      orderId: '12345678',
+      orderDate: '2023-05-15',
+      items: [
+        {
+          name: 'Radish White Microgreen seeds',
+          quantity: 1,
+          price: 999,
+          imageUrl: 'https://t4.ftcdn.net/jpg/03/88/04/41/240_F_388044101_IidJjwi2bonGwWDGZZqgPz7oxaowhsjp.jpg',
+          category: 'Seeds',
+        },
+      ],
+      shippingAddress: {
+        name: 'John Doe',
+        address: '123 Main St, Anytown USA',
+        city: 'New York',
+        state: 'NY',
+        zip: '10001',
+      },
+      total: 999,
+    },
   };
 
   // Update progress and status based on data from backend
   useEffect(() => {
-    const backendStatus = dataFromBackend.status;
+    const backendStatus = dataFromBackend.status.toLowerCase().replace(/ /g, '_');
     setStatus(backendStatus);
 
     switch (backendStatus) {
@@ -48,7 +69,7 @@ function SingleOrder() {
     ];
 
     return (
-      <div className="progress-container">
+      <div className="progress-container mb-4">
         <div className="progress-bar" style={{ width: `${progress}%` }}></div>
         {steps.map((step, index) => (
           <div
@@ -68,40 +89,103 @@ function SingleOrder() {
       <TopNav />
       <MiddleNav />
       <MainNav />
-      <Container className="mt-4">
-          <Row>
-                  <Col md={3} className='mb-4'>
-                   <div className='d-flex'>
-                        <div>
-                          <img
-                            src="https://t4.ftcdn.net/jpg/06/44/13/05/240_F_644130539_sjQPCYRXepzDmDvdFZ8juoeBTWiUxRfj.jpg"
-                            alt=""
-                            className="img-fluid"
-                          />
-                        </div>
-                        <div>
-                          <h5>Radish White Microgreen seeds</h5>
-                          <p>Category</p>
-                          <h5>₹999</h5>
-                        </div>
-                   </div>
-                  </Col>
-                  <Col md={6} className='d-flex align-items-center mb-4'>
-                   <div className='w-100' >
-                      <div>  
-                        {renderProgressBar()}
-                    </div>
-                    <div>
-                    <h6 className="mt-3 text-muted text-center"><span className='fw-bold text-dark'>{status.replace(/_/g, ' ')}</span></h6>
-                    </div>
-                   </div>
-                  </Col>
-                  <Col md={3}>
-                    <div>
-                        review the product
-                    </div>
-                  </Col>
-        </Row>
+      <Container className="mt-4 mb-4">
+        <Card className="shadow">
+          <Card.Body>
+            <Row className="align-items-center">
+              <Col md={3} className="mb-3 mb-md-0">
+                <div className="d-flex align-items-center">
+                  <div className="me-3">
+                    <img
+                      src={dataFromBackend.orderDetails.items[0].imageUrl}
+                      alt=""
+                      className="img-fluid"
+                    />
+                  </div>
+                  <div>
+                    <h5>{dataFromBackend.orderDetails.items[0].name}</h5>
+                    <p className="text-muted mb-0">{dataFromBackend.orderDetails.items[0].category}</p>
+                    <h5 className="mb-0">₹{dataFromBackend.orderDetails.items[0].price}</h5>
+                  </div>
+                </div>
+              </Col>
+              <Col md={6} className="mb-3 mb-md-0">
+                <div className="text-center">
+                  {renderProgressBar()}
+                  <h6 className="text-muted mb-0">
+                    <span className="fw-bold text-dark">{status.replace(/_/g, ' ')}</span>
+                  </h6>
+                </div>
+              </Col>
+              <Col md={3}>
+                <div className="text-center">
+                  <p className="fw-bold mb-2">Review this product</p>
+                  <div>
+                    <i className="fas fa-star text-success" />
+                    <i className="fas fa-star text-success" />
+                    <i className="fas fa-star text-success" />
+                    <i className="fas fa-star text-success" />
+                    <i className="fas fa-star text-muted" />
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+        <Card className="shadow mt-4">
+          <Card.Body>
+            <h5>Order Details</h5>
+            <ListGroup variant="flush">
+              <ListGroup.Item>
+                <div className="d-flex justify-content-between">
+                  <span>Order ID</span>
+                  <span>{dataFromBackend.orderDetails.orderId}</span>
+                </div>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <div className="d-flex justify-content-between">
+                  <span>Order Date</span>
+                  <span>{dataFromBackend.orderDetails.orderDate}</span>
+                </div>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <div className="d-flex justify-content-between">
+                  <span>Total</span>
+                  <span>₹{dataFromBackend.orderDetails.total}</span>
+                </div>
+              </ListGroup.Item>
+            </ListGroup>
+          </Card.Body>
+        </Card>
+        <Card className="shadow mt-4">
+          <Card.Body>
+            <h5>Delivery Address</h5>
+            <ListGroup variant="flush">
+              <ListGroup.Item>
+                <div className="d-flex justify-content-between">
+                  <span>Name</span>
+                  <span>{dataFromBackend.orderDetails.shippingAddress.name}</span>
+                </div>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <div className="d-flex justify-content-between">
+                  <span>Address</span>
+                  <span>{dataFromBackend.orderDetails.shippingAddress.address}</span>
+                </div>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <div className="d-flex justify-content-between">
+                  <span>City, State, ZIP</span>
+                  <span>
+                    {dataFromBackend.orderDetails.shippingAddress.city},{' '}
+                    {dataFromBackend.orderDetails.shippingAddress.state}{' '}
+                    {dataFromBackend.orderDetails.shippingAddress.zip}
+                  </span>
+                </div>
+              </ListGroup.Item>
+            </ListGroup>
+          </Card.Body>
+        </Card>
       </Container>
       <Footer />
     </>
