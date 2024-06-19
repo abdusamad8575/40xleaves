@@ -55,7 +55,7 @@ const Checkout = () => {
     navigate('/');
   };
 
-  const progressPercentage = (currentStep / 3) * 100; // Assuming there are 3 steps
+  const progressPercentage = (currentStep / 3) * 100; 
 
   return (
    <>

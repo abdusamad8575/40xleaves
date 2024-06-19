@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Row, Col, ProgressBar, Card, ListGroup, Modal, Form, Button } from 'react-bootstrap';
+import { Button, Card, Col, Form, Modal, ProgressBar, Row } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Review.css'; 
 
 function Review() {
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -10,13 +12,12 @@ function Review() {
   });
   const [showAllReviews, setShowAllReviews] = useState(false);
 
-  // Sample data for reviews
   const [reviews, setReviews] = useState([
     {
       id: 1,
       name: 'John Doe',
       rating: 5,
-      review: 'This product is amazing! Highly recommended. This product is amazing! Highly recommended.',
+      review: 'This product is amazing! Highly recommended.',
       date: '2023-04-25',
     },
     {
@@ -67,7 +68,7 @@ function Review() {
     const newReviewData = {
       id: reviews.length + 1,
       name: newReview.name,
-      rating: parseInt(newReview.rating),
+      rating: parseInt(newReview.rating, 10),
       review: newReview.review,
       date: new Date().toISOString().split('T')[0],
     };
@@ -81,81 +82,82 @@ function Review() {
     setShowAllReviews(true);
   };
 
-  // Calculate rating distribution
   const totalReviews = reviews.length;
   const ratingCounts = [0, 0, 0, 0, 0];
   reviews.forEach((review) => {
     ratingCounts[review.rating - 1]++;
   });
 
-  // Calculate average rating
   const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
   const averageRating = (totalRating / totalReviews).toFixed(1);
 
-  // Filter reviews to display
   const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 4);
 
   return (
-    <div className='mt-5'>
-      <h1 className="text-center mb-4 fw-bold ">Customer Reviews</h1>
+    <div className="review-section mt-5">
+      <h1 className="text-center mb-4 fw-bold">Customer Reviews</h1>
       <Row className="mb-4">
         <Col md={4}>
-          <Card>
+          <Card className="rating-summary-card">
             <Card.Body>
-              <div className="  mb-3">
-                <Card.Title className="fw-bold mb-0">Rating & Reviews</Card.Title>
-              </div>
-             <Row>
-                  <Col lg={4}>
-                      <div className="text-center mb-3">
-                        <h1>{averageRating}</h1>
-                        <div>
-                          {[...Array(5)].map((_, index) => (
-                            <i
-                              key={index}
-                              className={`fas fa-star ${index < Math.floor(averageRating) ? 'text-success' : 'text-muted'}`}
-                            />
-                          ))}
-                        </div>
-                        <small>{totalReviews}  ratings</small>
-                      </div>
-                  </Col>
-                <Col lg={8}>
-                      <div>
-                        {[5, 4, 3, 2, 1].map((rating) => (
-                          <div key={rating} className="d-flex justify-content-between align-items-center">
-                            <span className='text-muted'>
-                              <span className='fw-bold'>{rating}</span> <i className='fas fa-star'/>
-                            </span>
-                            <ProgressBar
-                              now={(ratingCounts[rating - 1] / totalReviews) * 100}
-                              variant={rating >= 4 ? 'success' : rating === 3 ? 'success' : 'success'}
-                              className="flex-grow-1 mx-3"
-                            />
-                            <span>{((ratingCounts[rating - 1] / totalReviews) * 100).toFixed(0)}%</span>
-                          </div>
-                        ))}
-                      </div>
+              <Card.Title className="fw-bold mb-3">Ratings & Reviews</Card.Title>
+              <Row>
+                <Col lg={4} className="text-center">
+                  <div className="rating-summary">
+                    <h1>{averageRating}</h1>
+                    <div>
+                      {[...Array(5)].map((_, index) => (
+                        <i
+                          key={index}
+                          className={`fas fa-star ${index < Math.floor(averageRating) ? 'text-success' : 'text-muted'}`}
+                        />
+                      ))}
+                    </div>
+                    <small>{totalReviews} ratings</small>
+                  </div>
                 </Col>
-             </Row>
-             <Row className='mt-3'>
-                 <Col>
-                 <div>
-                    <h5 className='fw-bold'>Review this product</h5>
-                    <p className='text-muted'>Help others Make an informed desicion</p>
-                 </div>
-                      <Button variant="outline-success" className='rounded-pill w-100 p-2 mt-2 ' onClick={handleOpenReviewModal}>
-                          Write a Review
-                        </Button>
-                 </Col>
-             </Row>
+                <Col lg={8}>
+                  <div className="rating-bars">
+                    {[5, 4, 3, 2, 1].map((rating) => (
+                      <div key={rating} className="d-flex align-items-center mb-2">
+                        <span className="text-muted me-2 d-flex">
+                          <span className="fw-bold">{rating}</span> <i className="fas fa-star" />
+                        </span>
+                        <div className="progress-container flex-grow-1 mx-2">
+                          <ProgressBar
+                            now={(ratingCounts[rating - 1] / totalReviews) * 100}
+                            variant="success"
+                            className="progress-bar-custom"
+                          />
+                        </div>
+                        <span>{((ratingCounts[rating - 1] / totalReviews) * 100).toFixed(0)}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </Col>
+              </Row>
+              <Row className="mt-3">
+                <Col>
+                  <div>
+                    <h5 className="fw-bold">Review this product</h5>
+                    <p className="text-muted">Help others make an informed decision</p>
+                  </div>
+                  <Button
+                    variant="outline-success"
+                    className="rounded-pill w-100 p-2 mt-2"
+                    onClick={handleOpenReviewModal}
+                  >
+                    Write a Review
+                  </Button>
+                </Col>
+              </Row>
             </Card.Body>
           </Card>
         </Col>
         <Col md={8}>
           <Card>
             <Card.Body>
-              <Card.Title>Recent Reviews</Card.Title>
+              <Card.Title>Reviews from customers</Card.Title>
               {displayedReviews.map((review) => (
                 <div key={review.id} className="mb-4">
                   <div className="d-flex align-items-center justify-content-between mb-2">
@@ -168,7 +170,7 @@ function Review() {
                       ))}
                     </div>
                     <div>
-                      <span className="me-2 fw-bold ">{review.name}</span>
+                      <span className="me-2 fw-bold">{review.name}</span>
                       <small className="me-auto">{review.date}</small>
                     </div>
                   </div>
@@ -203,7 +205,7 @@ function Review() {
                 placeholder="Enter your name"
               />
             </Form.Group>
-            <Form.Group controlId="formRating">
+            <Form.Group controlId="formRating" className="mt-3">
               <Form.Label>Rating</Form.Label>
               <Form.Control
                 as="select"
@@ -219,7 +221,7 @@ function Review() {
                 <option value={5}>5 stars</option>
               </Form.Control>
             </Form.Group>
-            <Form.Group controlId="formReview">
+            <Form.Group controlId="formReview" className="mt-3">
               <Form.Label>Review</Form.Label>
               <Form.Control
                 as="textarea"

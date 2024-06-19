@@ -1,0 +1,22 @@
+.category-content img{
+    object-fit: contain;
+}
+
+.category-content{
+    height: 240px;
+}
+
+
+@media (max-width:768px){
+  .catimg{
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+  }
+  h5{
+    font-size: 15px;
+  }
+  .category-content{
+    height: 150px;
+  }
+}

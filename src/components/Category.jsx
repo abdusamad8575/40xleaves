@@ -1,5 +1,6 @@
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
+import './Category.css'
 
 function Category() {
 
@@ -32,9 +33,9 @@ function Category() {
       <Container>
         <Row className='d-flex justify-content-center align-items-center '>
           {categories.map((category, index) => (
-            <Col key={index} md={6} lg={3} className="category-item">
-              <div className="category-content text-center shadow mt-3 rounded p-1" style={{height:'300px'}} >
-                <img src={category.imageUrl} alt={category.name} className="img-fluid rounded"/>
+            <Col key={index} xs={6} md={6} lg={3} className="category-item">
+              <div className="category-content text-center shadow mt-3 rounded p-1">
+                <img src={category.imageUrl} alt={category.name} width={150}height={150}  className="rounded catimg"/>
                 <h5 className='text-center fw-bold '>{category.name}</h5>
               </div>
             </Col>
