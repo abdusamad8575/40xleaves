@@ -6,7 +6,7 @@ const { upload } = require('../middlewares/multer');
 
 router.get('/', getBanners);
 router.get('/:id', getBannerById);
-router.post('/', authorization, upload.single('image'), addBanner);
+router.post('/', upload.single('image'), addBanner);
 router.patch('/', authorization, upload.single('image'), updateBanner);
 router.delete('/:id', authorization, deleteBanner);
 
