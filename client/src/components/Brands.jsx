@@ -1,8 +1,12 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
+import axiosInstance from '../axios'
 import image from '../assets/images/banner.jpg';
 import { Col, Container, Row } from 'react-bootstrap';
 
 function Brands() {
+  
+
+
     const categories = [
         {
           name: 'Microgreens Offers',

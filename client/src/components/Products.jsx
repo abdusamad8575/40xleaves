@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
+import axiosInstance from '../axios'
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css';
@@ -6,6 +7,34 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 function Products() {
+const [products,setProducts] = useState([]);
+  let urlQuery = '';
+
+  useEffect(()=>{
+
+    urlQuery=`/api/v1/products/productshome?page=1&limit=8&sortField=createdAt&sortOrder=desc`
+
+    const fetchData = async()=>{
+
+      try {
+
+        const response = await axiosInstance.get(urlQuery);
+        setProducts(response.data.data)
+       // console.log(response.data.data)
+        
+      } catch (error) {
+        console.log(error)
+      }
+
+    }
+
+
+    fetchData()
+
+
+  },[])
+
+
   const settings = {
     dots: true,
     infinite: true,
@@ -31,12 +60,15 @@ function Products() {
   };
 
   const items = [
-    { id: 1, name: 'Radish Pink Microgreen Seeds', imageUrl: 'https://images.unsplash.com/photo-1503289130890-6eff9c5df553?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8MjV8MjEwMDExNXx8ZW58MHx8fHx8' , price:'120' , quantity:'500' },
+    { id: 1, name: 'Radish Pink Microgreen Seeds',
+       imageUrl: 'https://images.unsplash.com/photo-1503289130890-6eff9c5df553?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8MjV8MjEwMDExNXx8ZW58MHx8fHx8' ,
+        price:'120' , quantity:'500' },
     { id: 2, name: 'Broccoli Microgreen Seeds', imageUrl: 'https://images.unsplash.com/photo-1504541891213-1b1dfdadb739?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8MTV8MjEwMDExNXx8ZW58MHx8fHx8' ,  price:'150' , quantity:'500' },
     { id: 3, name: 'Radish White Microgreen seeds', imageUrl: 'https://images.unsplash.com/photo-1505159042738-73dbae90178f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8Mjl8MjEwMDExNXx8ZW58MHx8fHx8' ,  price:'180' , quantity:'500' },
     { id: 4, name: 'Pak Choli Microgreen seeds', imageUrl: 'https://images.unsplash.com/photo-1483996887144-ede479a83102?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8Mjh8MjEwMDExNXx8ZW58MHx8fHx8' ,  price:'180' , quantity:'500' },
-  
   ];
+
+
 
   return (
     <div className='mt-5  bg-body-tertiary ' style={{overflowX:'hidden'}}>
@@ -46,17 +78,17 @@ function Products() {
           <Row>
             <Col>
               <Slider {...settings}>
-                {items.map(item => (
-                  <div key={item.id} className='d-flex justify-content-center p-2'>
+                {products.map(item => (
+                  <div key={item._id} className='d-flex justify-content-center p-2'>
                     <div className='shadow p-3 bg-white rounded' style={{padding:'10px',width:"80%"}}>
-                      <Link to={'/product'}><img src={item.imageUrl} alt={item.name} className="img-fluid mx-auto mb-2" style={{mixBlendMode:'multiply'}}/></Link>
+                      <Link to={'/product'}><img src={`http://localhost:5000/uploads/${item.image[0]}`} alt={item.name} className="img-fluid mx-auto mb-2" style={{mixBlendMode:'multiply'}}/></Link>
                      <Link to={'/product'}> <h5 className='text-muted'>{item.name}</h5></Link>
-                      <p className='fw-bold m-1'>₹{item.price}</p>
+                      <p className='fw-bold m-1'>₹{item.sale_rate}</p>
                      <div> 
-                      <span className='m-1 text-muted text-decoration-line-through '>₹999</span>
-                      <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
+                      <span className='m-1 text-muted text-decoration-line-through '>₹{item.price}</span>
+                      <span className='text-success fw-bold bg-success-subtle p-1'>{item.discount}% off</span>
                       </div>
-                      <p className='fw-bold'>{item.quantity} gm</p>
+                      <p className='fw-bold'>500 gm</p>
                     <div className='d-flex justify-content-between'>  
                    <Link to={'/wishlist'}>
                       <button className='btn btn-success rounded-3'>
