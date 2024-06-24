@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
+import axiosInstance from '../axios'
+
 import { Link } from 'react-router-dom';
 import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
@@ -6,6 +8,35 @@ import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
 
 function Wishlist() {
+
+    const [wishListData,setWishListData] = useState([])
+
+    let urlQuery = '';
+
+    useEffect(()=>{
+  
+      urlQuery=`/api/v1/user/getwishlist`
+  
+      const fetchData = async()=>{
+  
+        try {
+  
+          const response = await axiosInstance.get(urlQuery);
+          setWishListData(response.data.data)
+         // console.log(response.data.data)
+          
+        } catch (error) {
+          console.log(error)
+        }
+  
+      }
+  
+  
+      fetchData()
+  
+  
+    },[])
+
     const [wishlistItems, setWishlistItems] = useState([
         {
           id: 1,
@@ -30,13 +61,23 @@ function Wishlist() {
         },
       ]);
 
-      const handleRemoveFromWishlist = (itemId) => {
+      const handleRemoveFromWishlist =async (itemId) => {
         const updatedWishlistItems = wishlistItems.filter((item) => item.id !== itemId);
         setWishlistItems(updatedWishlistItems);
+
+        urlQuery=`/api/v1/user/removeFromWishlist/${itemId.id}`
+
+        const response = await axiosInstance.patch(urlQuery);
+
+
       };
     
-      const handleAddToCart = (item) => {
-        // Implement your logic to add the item to the cart here
+      const handleAddToCart =async (item) => {
+        urlQuery=`/api/v1/user/addToCart/${item.id}`
+
+        // Implement your logic to add the item to the cart here 
+        const response = await axiosInstance.patch(urlQuery);
+
         console.log('Adding to cart:', item);
       };
   return (

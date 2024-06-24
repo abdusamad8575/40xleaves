@@ -34,6 +34,52 @@ const [products,setProducts] = useState([]);
 
   },[])
 
+  const addWishlist = async (proId) => {
+try {
+  urlQuery = `/api/v1/user/addToWishlist/${proId}`
+  const response = await axiosInstance.patch(urlQuery);
+  console.log(response)
+} catch (error) {
+  console.log(error)
+
+}
+
+  }
+  
+  const removeWishlist = async (proId) => {
+    try {
+      urlQuery = `/api/v1/user/removeFromWishlist/${proId}`
+      const response = await axiosInstance.patch(urlQuery);
+console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+  const addCart = async (proId) => {
+    try {
+      urlQuery = `/api/v1/user/addToCart/${proId}`
+      const response = await axiosInstance.patch(urlQuery);
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    
+    }
+    
+      }
+      
+      const removeCart = async (proId) => {
+        try {
+          urlQuery = `/api/v1/user/removeFromCart/${proId}`
+          const response = await axiosInstance.patch(urlQuery);
+    console.log(response)
+        } catch (error) {
+          console.log(error)
+        }
+    
+      }
+
 
   const settings = {
     dots: true,
@@ -90,12 +136,44 @@ const [products,setProducts] = useState([]);
                       </div>
                       <p className='fw-bold'>500 gm</p>
                     <div className='d-flex justify-content-between'>  
-                   <Link to={'/wishlist'}>
-                      <button className='btn btn-success rounded-3'>
-                        <i className="fa-solid fa-heart"></i>
-                     </button>
-                   </Link>
-                     <Link to={'/cart'}> <button className='btn btn-success rounded-3'><i className="fas fa-shopping-cart"></i></button></Link>
+{/* {
+true ? (   <Link to={'/wishlist'}>
+  <button className='btn btn-success rounded-3' onClick={()=> addWishlist(item._id)} >
+    <i className="fa-solid fa-heart"></i>
+ </button>
+</Link>):
+(   <Link to={'/wishlist'}>
+  <button className='btn btn-danger rounded-3' onClick={()=> removeWishlist(item._id)}>
+    <i className="fa-solid fa-heart"></i>
+ </button>
+</Link>)
+
+} */}
+{
+true ? (   
+  <button className='btn btn-success rounded-3' onClick={()=> addWishlist(item._id)} >
+    <i className="fa-solid fa-heart"></i>
+ </button>
+):
+(    
+  <button className='btn btn-danger rounded-3' onClick={()=> removeWishlist(item._id)}>
+    <i className="fa-solid fa-heart"></i>
+ </button>
+ )
+
+}
+{
+  true ? (                      <button className='btn btn-success rounded-3' 
+    onClick={()=> addCart(item._id)}><i className="fas fa-shopping-cart"></i></button>
+  ) :
+  (
+      <button className='btn btn-danger rounded-3' onClick={()=> removeCart(item._id)}
+      ><i className="fas fa-shopping-cart"></i></button> 
+
+  )
+}
+                
+                     {/* <Link to={'/cart'}> <button className='btn btn-success rounded-3'><i className="fas fa-shopping-cart"></i></button></Link> */}
                   </div>
                     </div>
                   </div>

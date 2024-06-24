@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axiosInstance from '../axios'
+
 import { Link } from 'react-router-dom';
 import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
@@ -6,6 +8,35 @@ import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
 
 function Cart() {
+const [cartData,setCartData] = useState([])
+
+let urlQuery = '';
+
+useEffect(()=>{
+
+  urlQuery=`/api/v1/user/getcart`
+
+  const fetchData = async()=>{
+
+    try {
+
+      const response = await axiosInstance.get(urlQuery);
+      setCartData(response.data.data)
+     // console.log(response.data.data)
+      
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+
+  fetchData()
+
+
+},[])
+
+
   const initialCartItems = [
     {
       id: 1,
@@ -48,10 +79,16 @@ function Cart() {
     );
   };
 
-  const handleRemoveItem = itemId => {
+  const handleRemoveItem =async (itemId) => {
     setCartItems(prevCartItems =>
       prevCartItems.filter(item => item.id !== itemId)
     );
+    urlQuery=`/api/v1/user/removeFromCart/${itemId.id}`
+
+    const response = await axiosInstance.patch(urlQuery);
+
+
+
   };
 
   const subtotal = cartItems.reduce(
