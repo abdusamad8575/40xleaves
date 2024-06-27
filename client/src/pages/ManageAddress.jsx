@@ -72,6 +72,11 @@ setAddressDatas(response.data.data)
       console.log('Address submitted: ', response.data);
       setFormData('')
       handleClose();
+      setAddressDatas([])
+
+await fetchAddress('/api/v1/address')
+
+
     } catch (error) {
       console.error('Error submitting address: ', error);
     }
