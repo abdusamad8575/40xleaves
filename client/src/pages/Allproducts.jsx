@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
+import axiosInstance from '../axios'
 import { Link } from 'react-router-dom';
 import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
@@ -12,23 +13,108 @@ const Allproducts = () => {
   const [filterCategory, setFilterCategory] = useState('');
   const [sortOption, setSortOption] = useState('');
   const [products, setProducts] = useState([]);
+  const [page,setPage] = useState(1)
+  const [limit,setLimit] = useState(9)
+  const hasFetchedProducts = useRef(false);
+ const [category,setCategory] = useState([])
 
-  const getAllProducts = async () => {
-    const product = await getallproductsapi();
-    setProducts(product.data.data);
-    console.log(product.data.data);
-  };
+
+let urlQuery = ''
+urlQuery = `/api/v1/products?page=${page}&limit=${limit}&sortField=createdAt&sortOrder=desc`
+
+  const fetchProducts = async(urlQ)=>{
+
+try {
+
+  //write logics for sort query
+
+  //if(searchTerm!='') urlQ += `&search=${searchTerm}`
+
+  const response = await axiosInstance.get(urlQ)
+
+  //setProducts(...products,response.data.data)
+  setProducts((prevProducts) => [...prevProducts, ...response.data.data]);
+  console.log('get prods ',response.data.data)
+  
+} catch (error) {
+  
+}
+
+  }
+
+  const fetchCategory =async(urlC)=>{
+
+try {
+  const response = await axiosInstance.get(urlC)
+  setCategory(response.data.data)
+  console.log(response.data.data)
+} catch (error) {
+  
+}
+
+
+  }
+
+
 
   useEffect(() => {
-    getAllProducts();
+    if (!hasFetchedProducts.current) {
+      fetchProducts(urlQuery);
+      fetchCategory(`/api/v1/category`)
+      hasFetchedProducts.current = true;
+    }
   }, []);
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value.toLowerCase());
+
+  // const getAllProducts = async () => {
+  //   const product = await getallproductsapi();
+  //   setProducts(product.data.data);
+  //   console.log(product.data.data);
+  // };
+
+  // useEffect(() => {
+  //   getAllProducts();
+  // }, []);
+
+  const handleSearch =async (e) => {
+
+   setSearchTerm(e.target.value.toLowerCase());
+
   };
 
+  const onLoad = async()=>{
+    setPage(page+1) 
+    let urlQ = `/api/v1/products?page=${page+1}&limit=${limit}&sortField=createdAt&sortOrder=desc`
+
+if(searchTerm!='') urlQ += `&search=${searchTerm}`
+
+if(filterCategory!='') urlQ += `&category=${filterCategory}`
+
+
+  await  fetchProducts(urlQ)
+
+  }
+
+  const onSearch = async () =>{
+    setProducts([])
+setPage(1)
+    urlQuery = urlQuery + `&search=${searchTerm}`
+    fetchProducts(urlQuery)
+
+  }
+
+ 
+
+
   const handleFilterCategory = (e) => {
+    console.log(e.target.value)
+    setProducts([])
     setFilterCategory(e.target.value);
+    setPage(1)
+    if(searchTerm!='') urlQuery += `&search=${searchTerm}`
+    urlQuery = urlQuery + `&category=${e.target.value}`
+    fetchProducts(urlQuery)
+
   };
 
   const filteredProducts = products.filter((product) => {
@@ -37,6 +123,7 @@ const Allproducts = () => {
       (filterCategory === '' || product.category === filterCategory)
     );
   });
+  //value={filterCategory} onChange={handleFilterCategory}
 
   return (
     <>
@@ -55,21 +142,24 @@ const Allproducts = () => {
                   value={searchTerm}
                   onChange={handleSearch}
                 />
-                <button className="btn btn-outline-secondary" type="button">
+                <button className="btn btn-outline-secondary" type="button" onClick={onSearch} >
                   <i className="fas fa-search"></i>
                 </button>
               </div>
               <div className="d-flex flex-column align-items-center ms-3">
-                <select className="form-select" value={filterCategory} onChange={handleFilterCategory}>
+                <select className="form-select" onChange={ handleFilterCategory} >
                   <option value="">All Categories</option>
-                  <option value="Category A">Category A</option>
-                  <option value="Category B">Category B</option>
-                  <option value="Category C">Category C</option>
+                  {
+  category.map((cat) => (
+    <option key={cat.id} value={cat._id}  >{cat.name}</option>
+  ))
+}
+
                 </select>
               </div>
             </div>
             <div className="row">
-              {filteredProducts.map((item) => (
+              {products.map((item) => (
                 <div key={item._id} className=" col-xs-12 col-sm-6  col-md-4 mb-4">
                   <div className="card">
                     <Link to={`/product/${item._id}`}>
@@ -106,6 +196,9 @@ const Allproducts = () => {
                 </div>
               ))}
             </div>
+            <div className='text-center mt-4 p-5 '>
+               <button className='btn btn-success ' onClick={  onLoad } >Load More</button>
+              </div>
           </div>
         </div>
       </div>

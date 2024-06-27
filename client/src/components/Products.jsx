@@ -8,6 +8,9 @@ import { Link } from 'react-router-dom';
 
 function Products() {
 const [products,setProducts] = useState([]);
+const [wishlistItems, setWishlistItems] = useState([]);
+const [cartItems, setCartItems] = useState([]);
+
   let urlQuery = '';
 
   useEffect(()=>{
@@ -21,6 +24,11 @@ const [products,setProducts] = useState([]);
         const response = await axiosInstance.get(urlQuery);
         setProducts(response.data.data)
        // console.log(response.data.data)
+       const wishlistResponse = await axiosInstance.get('/api/v1/user/getwishlist');
+      setWishlistItems(wishlistResponse.data.data);
+      const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');
+      setCartItems(cartResponse.data.data.item);
+      console.log(cartResponse.data.data.item)
         
       } catch (error) {
         console.log(error)
@@ -29,16 +37,40 @@ const [products,setProducts] = useState([]);
     }
 
 
+
+
     fetchData()
 
 
   },[])
 
+  const fetchCart = async () => {
+    console.log('reached fetch cart 2')
+    try {
+      const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');
+      setCartItems(cartResponse.data.data.item);
+    //  console.log('reached fetch cart 3',cartResponse.data.data.item)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchWishlist = async () => {
+    try {
+      const wishlistResponse = await axiosInstance.get('/api/v1/user/getwishlist');
+      setWishlistItems(wishlistResponse.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   const addWishlist = async (proId) => {
 try {
   urlQuery = `/api/v1/user/addToWishlist/${proId}`
   const response = await axiosInstance.patch(urlQuery);
-  console.log(response)
+  await fetchWishlist();
+  //console.log(response)
 } catch (error) {
   console.log(error)
 
@@ -47,10 +79,12 @@ try {
   }
   
   const removeWishlist = async (proId) => {
+ 
     try {
       urlQuery = `/api/v1/user/removeFromWishlist/${proId}`
       const response = await axiosInstance.patch(urlQuery);
-console.log(response)
+      await fetchWishlist();
+//console.log(response)
     } catch (error) {
       console.log(error)
     }
@@ -61,7 +95,8 @@ console.log(response)
     try {
       urlQuery = `/api/v1/user/addToCart/${proId}`
       const response = await axiosInstance.patch(urlQuery);
-      console.log(response)
+    await  fetchCart()
+      //console.log(response)
     } catch (error) {
       console.log(error)
     
@@ -70,15 +105,30 @@ console.log(response)
       }
       
       const removeCart = async (proId) => {
+        console.log('reached rem cart',proId)
+        
         try {
-          urlQuery = `/api/v1/user/removeFromCart/${proId}`
+          const ItemId = cartItems.filter((item)=>item.productId._id == proId )
+          console.log(' item id',ItemId)
+          
+
+          urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
           const response = await axiosInstance.patch(urlQuery);
-    console.log(response)
+        await  fetchCart()
+    //console.log(response)
         } catch (error) {
           console.log(error)
         }
     
       }
+
+      const isInWishlist = (productId) => {
+        return wishlistItems.some((item) => item._id === productId);
+      };
+
+      const isInCart = (productId) => {
+        return cartItems.some((item) => item.productId._id === productId);
+      };
 
 
   const settings = {
@@ -150,10 +200,12 @@ true ? (   <Link to={'/wishlist'}>
 
 } */}
 {
-true ? (   
+! isInWishlist(item._id) ? (   
+
   <button className='btn btn-success rounded-3' onClick={()=> addWishlist(item._id)} >
     <i className="fa-solid fa-heart"></i>
  </button>
+
 ):
 (    
   <button className='btn btn-danger rounded-3' onClick={()=> removeWishlist(item._id)}>
@@ -163,7 +215,7 @@ true ? (
 
 }
 {
-  true ? (                      <button className='btn btn-success rounded-3' 
+  ! isInCart(item._id) ? (                      <button className='btn btn-success rounded-3' 
     onClick={()=> addCart(item._id)}><i className="fas fa-shopping-cart"></i></button>
   ) :
   (
