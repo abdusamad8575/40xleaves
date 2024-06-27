@@ -1,10 +1,11 @@
-const { userSchema } = require("../models/user");
+const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 module.exports.signup = async (req, res) => {
+   console.log(req.body)
    const {
-      username,
+      username, 
       password,
       email,
       phone,
@@ -12,36 +13,47 @@ module.exports.signup = async (req, res) => {
 
    try {
       const encryptedPassword = await bcrypt.hash(password, 10);
-      await userSchema.create({
+      // await User.create({
+      //    username,
+      //    password: encryptedPassword,
+      //    email,
+      //    phone,
+      // });
+      const newUser = new User({
          username,
          password: encryptedPassword,
-         email,
          phone,
-      });
+         email,
+       });
+    
+       await newUser.save();
 
-      const accessToken = jwt.sign(
-         { _id: userExists._id },
-         process.env.JWT_ACCESS_SECRET,
-         {
-            expiresIn: process.env.JWT_ACCESS_EXPIRY,
-         }
-      );
+      // const accessToken = jwt.sign(
+      //    { _id: userExists._id },
+      //    process.env.JWT_ACCESS_SECRET,
+      //    {
+      //       expiresIn: process.env.JWT_ACCESS_EXPIRY,
+      //    }
+      // );
 
-      const refreshToken = jwt.sign(
-         { _id: userExists._id },
-         process.env.JWT_REFRESH_SECRET,
-         {
-            expiresIn: process.env.JWT_REFRESH_EXPIRY,
-         }
-      );
+      // const refreshToken = jwt.sign(
+      //    { _id: userExists._id },
+      //    process.env.JWT_REFRESH_SECRET,
+      //    {
+      //       expiresIn: process.env.JWT_REFRESH_EXPIRY,
+      //    }
+      // );
 
-      console.log({ accessToken, refreshToken });
-
+      // console.log({ accessToken, refreshToken });
+      const { password: _, ...userWithoutPassword } = newUser.toObject();
       return res.status(200).json({
          message: "Registration successfull",
-         data: { token: { accessToken, refreshToken }, user }
+         data: { userWithoutPassword } 
+
+         // data: { token: { accessToken, refreshToken }, newUser } 
       });
    } catch (error) {
+      console.log('err',error)
       return res.status(500).json({ message: err?.message ?? 'Something went wrong' })
    }
 };
