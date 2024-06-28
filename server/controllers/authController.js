@@ -48,7 +48,7 @@ module.exports.signup = async (req, res) => {
       const { password: _, ...userWithoutPassword } = newUser.toObject();
       return res.status(200).json({
          message: "Registration successfull",
-         data: { userWithoutPassword } 
+         data: { userWithoutPassword,signupStatus:true } 
 
          // data: { token: { accessToken, refreshToken }, newUser } 
       });
@@ -59,7 +59,9 @@ module.exports.signup = async (req, res) => {
 };
 
 module.exports.signin = async (req, res) => {
-   const { usernameORemailORPhone, password } = req.body;
+   const { usernameORemailORPhone, password } = req.body; 
+   console.log('req',req.body)
+
    try {
       const pipeline = [
          {
