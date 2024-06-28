@@ -5,12 +5,17 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import {  useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 
 function Products() {
 const [products,setProducts] = useState([]);
 const [wishlistItems, setWishlistItems] = useState([]);
 const [cartItems, setCartItems] = useState([]);
+const navigate = useNavigate();
 
+const userDetails = useSelector(state => state.userDetails);
   let urlQuery = '';
 
   useEffect(()=>{
@@ -28,7 +33,7 @@ const [cartItems, setCartItems] = useState([]);
       setWishlistItems(wishlistResponse.data.data);
       const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');
       setCartItems(cartResponse.data.data.item);
-      console.log(cartResponse.data.data.item)
+      //console.log(cartResponse.data.data.item)
         
       } catch (error) {
         console.log(error)
@@ -66,59 +71,87 @@ const [cartItems, setCartItems] = useState([]);
 
 
   const addWishlist = async (proId) => {
-try {
-  urlQuery = `/api/v1/user/addToWishlist/${proId}`
-  const response = await axiosInstance.patch(urlQuery);
-  await fetchWishlist();
-  //console.log(response)
-} catch (error) {
-  console.log(error)
 
-}
+    if(!userDetails){
+      navigate('/login')
+      
+          }else{
+
+
+            try {
+              urlQuery = `/api/v1/user/addToWishlist/${proId}`
+              const response = await axiosInstance.patch(urlQuery);
+              await fetchWishlist();
+              //console.log(response)
+            } catch (error) {
+              console.log(error)
+            
+            }
+          }
+
+
 
   }
   
   const removeWishlist = async (proId) => {
- 
-    try {
-      urlQuery = `/api/v1/user/removeFromWishlist/${proId}`
-      const response = await axiosInstance.patch(urlQuery);
-      await fetchWishlist();
-//console.log(response)
-    } catch (error) {
-      console.log(error)
-    }
+    if(!userDetails){
+      navigate('/login')
+      
+          }else{
+            try {
+              urlQuery = `/api/v1/user/removeFromWishlist/${proId}`
+              const response = await axiosInstance.patch(urlQuery);
+              await fetchWishlist();
+        //console.log(response)
+            } catch (error) {
+              console.log(error)
+            }
+          }
+    
 
   }
 
   const addCart = async (proId) => {
-    try {
-      urlQuery = `/api/v1/user/addToCart/${proId}`
-      const response = await axiosInstance.patch(urlQuery);
-    await  fetchCart()
-      //console.log(response)
-    } catch (error) {
-      console.log(error)
-    
-    }
+    if(!userDetails){
+      navigate('/login')
+      
+          }else{
+            try {
+              urlQuery = `/api/v1/user/addToCart/${proId}`
+              const response = await axiosInstance.patch(urlQuery);
+            await  fetchCart()
+              //console.log(response)
+            } catch (error) {
+              console.log(error)
+            
+            }
+          }
+  
     
       }
       
       const removeCart = async (proId) => {
-        console.log('reached rem cart',proId)
-        
-        try {
-          const ItemId = cartItems.filter((item)=>item.productId._id == proId )
-          console.log(' item id',ItemId)
+        if(!userDetails){
+          navigate('/login')
           
+              }else{
+                console.log('reached rem cart',proId)
+        
+                try {
+                  const ItemId = cartItems.filter((item)=>item.productId._id == proId )
+                  console.log(' item id',ItemId)
+                  
+        
+                  urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
+                  const response = await axiosInstance.patch(urlQuery);
+                await  fetchCart()
+            //console.log(response)
+                } catch (error) {
+                  console.log(error)
+                }
 
-          urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
-          const response = await axiosInstance.patch(urlQuery);
-        await  fetchCart()
-    //console.log(response)
-        } catch (error) {
-          console.log(error)
-        }
+              }
+      
     
       }
 
@@ -177,8 +210,8 @@ try {
                 {products.map(item => (
                   <div key={item._id} className='d-flex justify-content-center p-2'>
                     <div className='shadow p-3 bg-white rounded' style={{padding:'10px',width:"80%"}}>
-                      <Link to={'/product'}><img src={`http://localhost:5000/uploads/${item.image[0]}`} alt={item.name} className="img-fluid mx-auto mb-2" style={{mixBlendMode:'multiply'}}/></Link>
-                     <Link to={'/product'}> <h5 className='text-muted'>{item.name}</h5></Link>
+                      <Link to={`/product/${item._id}`}><img src={`http://localhost:5000/uploads/${item.image[0]}`} alt={item.name} className="img-fluid mx-auto mb-2" style={{mixBlendMode:'multiply'}}/></Link>
+                     <Link to={`/product/${item._id}`}> <h5 className='text-muted'>{item.name}</h5></Link>
                       <p className='fw-bold m-1'>₹{item.sale_rate}</p>
                      <div> 
                       <span className='m-1 text-muted text-decoration-line-through '>₹{item.price}</span>
@@ -202,7 +235,7 @@ true ? (   <Link to={'/wishlist'}>
 {
 ! isInWishlist(item._id) ? (   
 
-  <button className='btn btn-success rounded-3' onClick={()=> addWishlist(item._id)} >
+  <button className='btn btn-success rounded-3' onClick={   ()=> addWishlist(item._id)} >
     <i className="fa-solid fa-heart"></i>
  </button>
 

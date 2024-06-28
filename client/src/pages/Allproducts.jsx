@@ -1,5 +1,7 @@
 import React, { useEffect, useState,useRef } from 'react';
 import axiosInstance from '../axios'
+import {  useSelector } from 'react-redux';
+
 import { Link } from 'react-router-dom';
 import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
@@ -7,6 +9,7 @@ import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
 import { getallproductsapi } from '../services/allApi';
 import { ServerURL } from '../services/baseUrl';
+import { useNavigate } from 'react-router-dom';
 
 const Allproducts = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,7 +20,10 @@ const Allproducts = () => {
   const [limit,setLimit] = useState(9)
   const hasFetchedProducts = useRef(false);
  const [category,setCategory] = useState([])
-
+ const userDetails = useSelector(state => state.userDetails);
+ const navigate = useNavigate();
+ const [wishlistItems, setWishlistItems] = useState([]);
+ const [cartItems, setCartItems] = useState([]);
 
 let urlQuery = ''
 urlQuery = `/api/v1/products?page=${page}&limit=${limit}&sortField=createdAt&sortOrder=desc`
@@ -35,7 +41,11 @@ try {
   //setProducts(...products,response.data.data)
   setProducts((prevProducts) => [...prevProducts, ...response.data.data]);
   console.log('get prods ',response.data.data)
-  
+  const wishlistResponse = await axiosInstance.get('/api/v1/user/getwishlist');
+  setWishlistItems(wishlistResponse.data.data);
+  const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');
+  setCartItems(cartResponse.data.data.item);
+  //console.log(cartResponse.data.data.item)
 } catch (error) {
   
 }
@@ -125,6 +135,121 @@ setPage(1)
   });
   //value={filterCategory} onChange={handleFilterCategory}
 
+  const fetchCart = async () => {
+    console.log('reached fetch cart 2')
+    try {
+      const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');
+      setCartItems(cartResponse.data.data.item);
+    //  console.log('reached fetch cart 3',cartResponse.data.data.item)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchWishlist = async () => {
+    try {
+      const wishlistResponse = await axiosInstance.get('/api/v1/user/getwishlist');
+      setWishlistItems(wishlistResponse.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  const addWishlist = async (proId) => {
+
+    if(!userDetails){
+      navigate('/login')
+      
+          }else{
+
+
+            try {
+              urlQuery = `/api/v1/user/addToWishlist/${proId}`
+              const response = await axiosInstance.patch(urlQuery);
+              await fetchWishlist();
+              //console.log(response)
+            } catch (error) {
+              console.log(error)
+            
+            }
+          }
+
+
+
+  }
+  
+  const removeWishlist = async (proId) => {
+    if(!userDetails){
+      navigate('/login')
+      
+          }else{
+            try {
+              urlQuery = `/api/v1/user/removeFromWishlist/${proId}`
+              const response = await axiosInstance.patch(urlQuery);
+              await fetchWishlist();
+        //console.log(response)
+            } catch (error) {
+              console.log(error)
+            }
+          }
+    
+
+  }
+
+  const addCart = async (proId) => {
+    if(!userDetails){
+      navigate('/login')
+      
+          }else{
+            try {
+              urlQuery = `/api/v1/user/addToCart/${proId}`
+              const response = await axiosInstance.patch(urlQuery);
+            await  fetchCart()
+              //console.log(response)
+            } catch (error) {
+              console.log(error)
+            
+            }
+          }
+  
+    
+      }
+      
+      const removeCart = async (proId) => {
+        if(!userDetails){
+          navigate('/login')
+          
+              }else{
+                console.log('reached rem cart',proId)
+        
+                try {
+                  const ItemId = cartItems.filter((item)=>item.productId._id == proId )
+                  console.log(' item id',ItemId)
+                  
+        
+                  urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
+                  const response = await axiosInstance.patch(urlQuery);
+                await  fetchCart()
+            //console.log(response)
+                } catch (error) {
+                  console.log(error)
+                }
+
+              }
+      
+    
+      }
+
+  const isInWishlist = (productId) => {
+    return wishlistItems.some((item) => item._id === productId);
+  };
+
+  const isInCart = (productId) => {
+    return cartItems.some((item) => item.productId._id === productId);
+  };
+
+
   return (
     <>
       <TopNav />
@@ -182,14 +307,21 @@ setPage(1)
                         <p className="text-muted">{item.quantity}</p>
                       </div>
                       <div className="d-flex justify-content-between align-items-center">
-                        <Link to={`/wishlist/${item._id}`}>
-                          <button className="btn btn-outline-success rounded-pill">
+                     { ! isInWishlist(item._id) ? 
+                      <button className="btn btn-outline-success rounded-pill" onClick={   ()=> addWishlist(item._id)}>
+                      <i className="fas fa-heart"></i>
+                    </button>
+                      :
+                          <button className="btn btn-outline-danger rounded-pill" onClick={()=> removeWishlist(item._id)}>
                             <i className="fas fa-heart"></i>
                           </button>
-                        </Link>
-                        <Link to={`/cart/${item._id}`}>
-                          <button className="btn btn-success rounded-pill">Add to Cart</button>
-                        </Link>
+                        }
+
+                      { 
+                       ! isInCart(item._id) ?  
+                       <button className="btn btn-success rounded-pill" onClick={()=> addCart(item._id)} >Add to Cart</button> :
+                          <button className="btn btn-danger rounded-pill"  onClick={()=> removeCart(item._id)}>Remove from Cart</button>
+                        }
                       </div>
                     </div>
                   </div>

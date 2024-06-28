@@ -1,5 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate,useParams } from 'react-router-dom';
+import axiosInstance from '../axios'
+
 import { Accordion, Button, Carousel, Col, Container, Image, ListGroup, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
@@ -11,6 +14,24 @@ import Footer from '../components/Footer';
 
 function Product() {
   const [selectedImage, setSelectedImage] = useState(0);
+  const [productData,setProductData] = useState([])
+  const navigate = useNavigate();
+  const { proId } = useParams();
+
+
+  const fetchData = async()=>{
+    const urlQuery = `/api/v1/products/${proId}`
+    const response = await axiosInstance.get(urlQuery);
+    setProductData(response.data.data)
+console.log(response.data.data)
+
+  }
+
+  useEffect(()=>{
+
+fetchData()
+
+  },[])
 
   const product = {
     name: 'Broccoli Microgreen Seeds',
@@ -133,12 +154,12 @@ function Product() {
             </Col>
             <Col lg={6}>
               <div className="product-info mb-4">
-                <h1 className="product-name fw-bold ">{product.name}</h1>
-                <p className='text-muted fw-lighter m-0'>MRP: <span className='text-decoration-line-through'>₹{product.mrp}</span> </p>
-                <h3 className="font-weight-bold">Price: ₹{product.price}</h3>
+                <h1 className="product-name fw-bold ">{productData.name}</h1>
+                <p className='text-muted fw-lighter m-0'>MRP: <span className='text-decoration-line-through'>₹{productData.price}</span> </p>
+                <h3 className="font-weight-bold">Price: ₹{productData.sale_rate}</h3>
   
-                {product.mrp && product.price && (
-                  <p className="m-0 text-success">You save: {((product.mrp - product.price) / product.mrp * 100).toFixed(2)}%</p>
+                {productData.price && productData.sale_rate && (
+                  <p className="m-0 text-success">You save: {((productData.price - productData.sale_rate) / productData.price * 100).toFixed(2)}%</p>
                 )}
                 <p className='text-muted'>(inclusive of all taxes)</p>
   
@@ -168,9 +189,9 @@ function Product() {
                 <Accordion.Item eventKey="0">
                   <Accordion.Header>About this item</Accordion.Header>
                   <Accordion.Body>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam sit ut sequi cumque ab ipsum molestias. Doloribus esse perspiciatis necessitatibus quam, doloremque porro unde excepturi corrupti voluptas accusamus quibusdam officiis.
-                      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus obcaecati accusamus iste temporibus mollitia laboriosam consequatur assumenda quasi eveniet eligendi illo sapiente deleniti nemo, sequi at voluptatibus ab eius repudiandae.
-                  </Accordion.Body>
+                
+                {productData.description}
+                 </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="1">
                   <Accordion.Header>Benefits</Accordion.Header>

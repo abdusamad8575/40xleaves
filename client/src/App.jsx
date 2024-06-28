@@ -22,18 +22,21 @@ import ProfileInfo from './pages/ProfileInfo';
 import ManageAddress from './pages/ManageAddress';
 import Orders from './pages/Orders';
 import SingleOrder from './pages/SingleOrder';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 
 function App() {
 
   return (
     <>
+   <Provider store={store}> 
      <Routes>
       <Route path='/' element={<Home/>}/>
       <Route path='/cart' element={<Cart/>}/>
       <Route path='/allproducts' element={<Allproducts/>}/>
       <Route path='/wishlist' element={<Wishlist/>}/>
-      <Route path='/product' element={<Product/>}/>
+      <Route path='/product/:proId' element={<Product/>}/>
       <Route path='/contactus' element={<ContactUs/>}/>
       <Route path='/blogs' element={<Blogs/>}/>
       <Route path='/about' element={<About/>}/>
@@ -48,7 +51,10 @@ function App() {
       <Route path='*' element={<PageNotFound/>}/>
      </Routes>
  
+     </Provider>
     </>
+
+
   )
 }
 

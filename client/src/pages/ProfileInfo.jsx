@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 function ProfileInfo() {
   const [name, setName] = useState('User');
@@ -7,6 +8,9 @@ function ProfileInfo() {
   const [nameEditable, setNameEditable] = useState(false);
   const [emailEditable, setEmailEditable] = useState(false);
   const [phoneEditable, setPhoneEditable] = useState(false);
+  const userDetails = useSelector(state => state.userDetails);
+
+  console.log('usrr',userDetails)
 
   const handleEditName = () => {
     setNameEditable(true);
@@ -29,7 +33,7 @@ function ProfileInfo() {
               {nameEditable ? 'Save' : 'Edit'}
             </button>
       </div>
-        <input type="text" value={name} disabled={!nameEditable}onChange={(e) => setName(e.target.value)} className='form-control '/>
+        <input type="text" value={userDetails==null ? '' : userDetails.username} disabled={!nameEditable}onChange={(e) => setName(e.target.value)} className='form-control '/>
        
       </div>
       <div>
@@ -40,7 +44,7 @@ function ProfileInfo() {
               {emailEditable ? 'Save' : 'Edit'}
             </button>
       </div>
-       <input type="text" value={email} disabled={!emailEditable}onChange={(e) => setEmail(e.target.value)} className='form-control'/>
+       <input type="text" value={ userDetails==null ? '' : userDetails.email} disabled={!emailEditable}onChange={(e) => setEmail(e.target.value)} className='form-control'/>
       </div>
       <div>
        <div className='d-flex justify-content-between mt-3'>
@@ -49,7 +53,7 @@ function ProfileInfo() {
               {phoneEditable ? 'Save' : 'Edit'}
             </button>
        </div>
-        <input type="text" value={phone} disabled={!phoneEditable}onChange={(e) => setPhone(e.target.value)} className='form-control'/>
+        <input type="text" value={userDetails==null ? '' : userDetails.phone} disabled={!phoneEditable}onChange={(e) => setPhone(e.target.value)} className='form-control'/>
       </div>
     </div>
   );

@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
+import axiosInstance from '../axios';
+
 import '../App.css';
 import Banner from '../components/Banner';
 import Brands from '../components/Brands';
@@ -9,8 +11,29 @@ import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
 import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserDetails, clearUserDetails } from '../redux/actions/userActions';
 
 function Home() {
+  const dispatch = useDispatch();
+ 
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get('/api/v1/auth/user');
+        console.log(response.data.data)
+        dispatch(setUserDetails(response.data.data));
+      } catch (error) {
+        console.log('errr', error);
+        dispatch(clearUserDetails());
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div>
      <TopNav/>

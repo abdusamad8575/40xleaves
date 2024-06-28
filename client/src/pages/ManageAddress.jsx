@@ -21,8 +21,9 @@ function ManageAddress() {
     // primary: true,
   });
   const [show, setShow] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [addressDatas,setAddressDatas] = useState([])
-
+  const [editData, setEditData] = useState({});
 
   const fetchAddress = async(urlQ) =>{
 
@@ -50,11 +51,65 @@ setAddressDatas(response.data.data)
   const handleShow = async() => {
     setShow(true);
   }
-
-  const onSubmit = async ()=>{
-
-    setShow(false);
+  //for edit
+  const handleCloseEdit = async() => {
+    setShowEdit(false);
   }
+  const handleShowEdit = async(addr) => {
+    setShowEdit(true);
+    setEditData(addr)
+//console.log(addr)
+  }
+
+  const handleSubmitEdit = async (e) => {
+
+    e.preventDefault()
+    try {
+      // Prepare the updated address data object from the form fields
+      const updatedAddressData = {
+        firstname: editData.firstname,
+        lastname: editData.lastname,
+        address_line_1: editData.address_line_1,
+        address_line_2: editData.address_line_2,
+        mobile: editData.mobile,
+        country: editData.country,
+        city: editData.city,
+        state: editData.state,
+        zip: editData.zip,
+        _id:editData._id
+      };
+  
+      // Make a POST request to send the updated address data to the backend
+      const response = await axiosInstance.patch('/api/v1/address', updatedAddressData);
+      
+      console.log('Address updated successfully:', updatedAddressData);
+  
+      // Close the modal after successful submission
+      setAddressDatas([])
+
+      await fetchAddress('/api/v1/address')
+      handleCloseEdit();
+  
+      // Optionally, you can perform additional actions after a successful submission
+    } catch (error) {
+      // Handle errors if the POST request fails
+      console.error('Error updating address:', error);
+    }
+  };
+  
+
+ //for edit
+ const handleChangeEdit = (e) => {
+  const { name, value } = e.target;
+
+
+
+  setEditData((prevData) => ({
+    ...prevData,
+    [name]: value,
+  }));
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,6 +118,8 @@ setAddressDatas(response.data.data)
       [name]: value,
     }));
   };
+
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -229,24 +286,140 @@ setAddressDatas((prevAddresses) =>
         
         addressDatas.map((addr)=>(
 
-<div className='mt-3 border p-3'>
+<div className='mt-3 border p-3' key={addr._id}  >
           <div className='d-flex justify-content-between align-items-center mb-2'>
             <span className='bg-secondary-subtle p-1'>
               Home
             </span>
-            {
-! addr.primary && (
+            
+
   <div className="d-flex justify-content-end gap-2 mt-4">
-  <Button variant="primary" type="submit">
+
+  <Button variant="primary" type="submit" onClick={()=>handleShowEdit(addr)} >
         edit
       </Button>
-  <Button variant="primary" type="submit" onClick={(e)=> setPrimary(addr._id)} >
-        default
-      </Button>
-  </div>
-)
 
-            }
+
+  {! addr.primary && (<Button variant="primary" type="submit" onClick={(e)=> setPrimary(addr._id)} >
+        default
+      </Button>)}
+  </div>
+
+
+            
+
+
+<Modal show={showEdit} onHide={handleCloseEdit} backdrop="static" keyboard={false}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Address</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleSubmitEdit}>
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="formGridFirstName">
+                  <Form.Label>First Name</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    placeholder={editData.firstname} 
+                    name="firstname" 
+                    value={editData.firstname} 
+                    onChange={handleChangeEdit} 
+                  />
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formGridLastName">
+                  <Form.Label>Last Name</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    placeholder="Doe" 
+                    name="lastname" 
+                    value={editData.lastname} 
+                    onChange={handleChangeEdit} 
+                  />
+                </Form.Group>
+              </Row>
+
+              <Form.Group className="mb-3" controlId="formGridAddress1">
+                <Form.Label>Address Line 1</Form.Label>
+                <Form.Control 
+                  placeholder="1234 Main St" 
+                  name="address_line_1" 
+                  value={editData.address_line_1} 
+                  onChange={handleChangeEdit} 
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formGridAddress2">
+                <Form.Label>Address Line 2</Form.Label>
+                <Form.Control 
+                  placeholder="1234 Main St" 
+                  name="address_line_2" 
+                  value={editData.address_line_2} 
+                  onChange={handleChangeEdit} 
+                />
+              </Form.Group>
+
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="formGridPhone">
+                  <Form.Label>Phone</Form.Label>
+                  <Form.Control 
+                    type="number" 
+                    name="mobile" 
+                    value={editData.mobile} 
+                    onChange={handleChangeEdit} 
+                  />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridCountry">
+                  <Form.Label>Country</Form.Label>
+                  <Form.Control 
+                    type="text" 
+                    name="country" 
+                    value={editData.country} 
+                    onChange={handleChangeEdit} 
+                  />
+                </Form.Group>
+              </Row>
+
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="formGridCity">
+                  <Form.Label>City</Form.Label>
+                  <Form.Control 
+                    name="city" 
+                    value={editData.city} 
+                    onChange={handleChangeEdit} 
+                  />
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formGridState">
+                  <Form.Label>State</Form.Label>
+                  <Form.Control 
+                    name="state" 
+                    value={editData.state} 
+                    onChange={handleChangeEdit} 
+                  />
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formGridZip">
+                  <Form.Label>Zip</Form.Label>
+                  <Form.Control 
+                    name="zip" 
+                    value={editData.zip} 
+                    onChange={handleChangeEdit} 
+                  />
+                </Form.Group>
+              </Row>
+
+              <div className="d-flex justify-content-end gap-2 mt-4">
+                <Button variant="secondary" onClick={handleCloseEdit}>
+                  Close
+                </Button>
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
+              </div>
+            </Form>
+          </Modal.Body>
+        </Modal>
            
           
           </div>
