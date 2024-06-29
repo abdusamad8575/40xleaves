@@ -9,6 +9,50 @@ import Footer from '../components/Footer';
 
 function Cart() {
 const [cartData,setCartData] = useState([])
+const [salePriceTotal,setSalePriceTotal] = useState(0)
+const [proPriceTotal,setProPriceTotal] = useState(0)
+const [discountTotal,setDiscountTotal] = useState(0)
+
+
+const calculateTotalSalePrice = (items) => {
+  let totalSalePrice = 0;
+
+  items.forEach((item) => {
+   
+  
+    
+    // Add the sale_rate to the totalSalePrice
+    totalSalePrice +=item.productId.sale_rate;
+  });
+
+  return totalSalePrice;
+};
+const calculateTotalProPrice = (items) => {
+  let totalSalePrice = 0;
+
+  items.forEach((item) => {
+   
+  
+    
+    // Add the sale_rate to the totalSalePrice
+    totalSalePrice +=item.productId.price;
+  });
+
+  return totalSalePrice;
+};
+const calculateTotalDiscountPrice = (items) => {
+  let totalSalePrice = 0;
+
+  items.forEach((item) => {
+   
+  
+    
+    // Add the sale_rate to the totalSalePrice
+    totalSalePrice +=item.productId.discount;
+  });
+
+  return totalSalePrice;
+};
 
 let urlQuery = '';
 
@@ -23,7 +67,25 @@ useEffect(()=>{
       const response = await axiosInstance.get(urlQuery);
       setCartData(response.data.data)
       console.log(response.data.data)
+      const items = response.data.data.item;
+
+// Calculate the total sale price
+const totalSalePrice = calculateTotalSalePrice(items);
+console.log(totalSalePrice)
+    setSalePriceTotal(totalSalePrice)
+
+    // Calculate the total  price
+const totalProPrice = calculateTotalProPrice(items);
+console.log(totalProPrice)
+    setProPriceTotal(totalProPrice)
+
+    // Calculate the total discount
+const totalDiscount = calculateTotalDiscountPrice(items);
+console.log(totalDiscount)
+    setDiscountTotal(totalDiscount)
       
+
+
     } catch (error) {
       console.log(error)
     }
@@ -208,12 +270,12 @@ useEffect(()=>{
                     <i className="fas fa-receipt me-2"></i>Order Summary
                   </h5>
                   <div>
-                    <p>Price: ₹{subtotal.toFixed(2)}</p>
-                    <p>Discount: ₹{discount}</p>
-                    <p>Delivery Charges: ₹{deliveryCharges}</p>
+                    <p>Price: ₹{proPriceTotal}</p>
+                    <p>Discount: ₹{proPriceTotal-salePriceTotal}</p>
+                    <p  >Delivery Charges: ₹{deliveryCharges}</p>
                     <hr />
                     <p className="card-text fw-bold">
-                      Total Amount: ₹{totalAfterDiscount.toFixed(2)}
+                      Total Amount: ₹{salePriceTotal}
                     </p>
                   </div>
                   <Link to={'/checkout'}>
