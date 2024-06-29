@@ -1,14 +1,19 @@
 import { Alert, Box, Button, Grid, ToggleButton, Typography } from "@mui/material";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PageLayout from 'layouts/PageLayout';
 import toast from "react-hot-toast";
 import Input from "components/Input";
-import { useNavigate } from "react-router-dom";
-import { useAddBanners } from "queries/StoreQuery";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEditCategorys, useGetCategorysById, useDeleteCategorys } from "queries/ProductQuery";
 
-const AddBanner = () => {
-   const [data, setData] = useState({})
+const EditCategory = () => {
+   const { id } = useParams();
    const navigate = useNavigate()
+   const { data: res, isLoading } = useGetCategorysById({ id });
+   useEffect(() => {
+      setData(res?.data)
+   }, [res])
+   const [data, setData] = useState({})
    const fileInputRef = React.useRef(null);
    const handleFileSelect = () => {
       fileInputRef.current.click();
@@ -22,20 +27,33 @@ const AddBanner = () => {
    const handleChange = (e) => {
       setData(prev => ({ ...prev, [e.target.name]: e.target.value }));
    };
-   const { mutateAsync: addBanners, isLoading } = useAddBanners()
+   const { mutateAsync: editCategory, isLoading: updating } = useEditCategorys()
+   const { mutateAsync: deleteCategory, isLoading: deleting } = useDeleteCategorys()
 
+   const handleDelete = () => {
+      deleteCategory(data)
+         .then((res) => {
+            if (res) {
+               toast.success(res?.message ?? "Category deleted Successfully");
+               navigate('/category')
+            }
+         })
+         .catch((err) => {
+            toast.error(err?.message ?? "Something went wrong");
+         });
+   };
    const handleSubmit = () => {
       try {
-         if (!data?.title) {
-            return toast.error("title is required")
+         if (!data?.name) {
+            return toast.error("name is required")
          }
-         if (!data?.subtitle) {
-            return toast.error("subtitle is required")
-         }
-         if (!data?.url) {
-            return toast.error("url is required")
-         }
-         if (!data?.description) {
+         // if (!data?.subtitle) {
+         //    return toast.error("subtitle is required")
+         // }
+         // if (!data?.url) {
+         //    return toast.error("url is required")
+         // }
+         if (!data?.desc) {
             return toast.error("description is required")
          }
          if (!data?.image) {
@@ -44,16 +62,19 @@ const AddBanner = () => {
          const formData = new FormData();
          for (const key in data) {
             if (data.hasOwnProperty(key) && key !== "image") {
+               console.log('key',key,data[key]);
                formData.append(key, data[key]);
             }
          }
-         typeof (data.image) == 'object' && formData.append("image", data?.image, data?.image?.name);
-         addBanners(formData)
+         typeof (data.image) == 'object' && formData.append("image", data.image, data?.image?.name);
+         // console.log("formData",formData);
+         editCategory(formData)
             .then((res) => {
                if (res) {
-                  toast.success(res?.message ?? "Banner added Successfully");
-                  navigate('/banners')
-               }            })
+                  toast.success(res?.message ?? "Category added Successfully");
+                  navigate('/category')
+               }
+            })
             .catch((err) => {
                toast.error(err?.message ?? "Something went wrong");
             });
@@ -64,74 +85,47 @@ const AddBanner = () => {
    }
    return (
       <PageLayout
-         title={'Add Banner'}
+         title={'Edit Category'}
       >
          <Box sx={{ flexGrow: 1 }} display={'flex'} justifyContent={'center'}>
             <Grid container spacing={2} maxWidth={600} py={5}>
                <Grid item xs={12} sm={6}>
                   <Input
                      required
-                     placeholder="Banner Title"
-                     id="title"
-                     name="title"
-                     label="Banner Title"
-                     value={data?.title || ''}
+                     placeholder="Category Name"
+                     id="name"
+                     name="name"
+                     label="Category Name"
+                     value={data?.name || ''}
                      onChange={handleChange}
                      fullWidth
-                     autoComplete="Title"
+                     autoComplete="name"
                      variant="outlined"
                   />
                </Grid>
-               <Grid item xs={12} sm={6}>
-                  <Input
-                     required
-                     placeholder="Banner SubTitle"
-                     id="subtitle"
-                     name="subtitle"
-                     label="Banner Subtitle"
-                     value={data?.subtitle || ''}
-                     onChange={handleChange}
-                     fullWidth
-                     autoComplete="Subtitle"
-                     variant="outlined"
-                  />
-               </Grid>
-               <Grid item xs={12} sm={6}>
-                  <Input
-                     required
-                     placeholder="Banner Target (url)"
-                     id="url"
-                     name="url"
-                     label="Banner Target (url)"
-                     value={data?.url || ''}
-                     onChange={handleChange}
-                     fullWidth
-                     autoComplete="Banner Action (url)"
-                     variant="outlined"
-                  />
-               </Grid>
+               
                <Grid item xs={12} sm={6}>
                   <Typography variant="caption">
-                  Banner status &nbsp;
+                  Category status &nbsp;
                   </Typography>
                   <ToggleButton
-                     value={data?.status}
-                     selected={data?.status}
+                     value={data?.isAvailable}
+                     selected={data?.isAvailable}
                      onChange={() => {
-                        setData(prev => ({ ...prev, status: !data?.status }))
+                        setData(prev => ({ ...prev, isAvailable: !data?.isAvailable}))
                      }}
                   >
-                     {data?.status ? 'Active' : 'Blocked'}
+                     {data?.isAvailable ? 'Active' : 'Blocked'}
                   </ToggleButton>
                </Grid>
 
                <Grid item xs={12}>
                   <Input
                      id="description"
-                     name="description"
-                     placeholder="Banner Description"
-                     label="Banner Description *"
-                     value={data?.description || ''}
+                     name="desc"
+                     placeholder="Category Description"
+                     label="Category Description *"
+                     value={data?.desc || ''}
                      onChange={handleChange}
                      fullWidth
                      autoComplete="Description"
@@ -210,12 +204,13 @@ const AddBanner = () => {
                   </Box>
                </Grid>
                <Grid item xs={12}>
-                  <Button onClick={handleSubmit}>Add Banner</Button>
+                  <Button onClick={handleSubmit}>UPDATE Category</Button>
+                  <Button color="secondary" onClick={handleDelete}>DELETE Category</Button>
                </Grid>
                <Grid item xs={12}>
                   <Alert color="primary" severity="info" sx={{ mt: 3, fontSize: 13 }}>
                      <ul style={{ margin: "0", padding: "0" }}>
-                        <li> Make your thumbnail 1280 by 720 pixels (4:5 ratio)</li>
+                        <li>Make your thumbnail 1280 by 720 pixels (4:5 ratio)</li>
                         <li>Ensure that your thumbnail is less than 2MB</li>
                         <li>Use a JPG, PNG, or JPEG file format</li>
                      </ul>
@@ -228,4 +223,4 @@ const AddBanner = () => {
    )
 }
 
-export default AddBanner
+export default EditCategory

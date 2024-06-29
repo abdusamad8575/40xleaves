@@ -1,22 +1,24 @@
-import { Button, Grid } from '@mui/material'
+import { Button, Grid,ToggleButton } from '@mui/material'
 import Input from 'components/Input'
 import PageLayout from 'layouts/PageLayout'
 import React, { useEffect, useState } from 'react'
 import Typography from 'components/Typography'
 import toast from 'react-hot-toast'
 import { useGetProductById } from 'queries/ProductQuery'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import ImageList from './ImageList'
-import { useUpdateProduct } from 'queries/ProductQuery'
+import { useUpdateProduct,useDeleteProduct } from 'queries/ProductQuery'
 
 const EditProduct = () => {
    const { id } = useParams()
+   const navigate = useNavigate()
    const [details, setDetails] = useState({})
    const { data, isLoading } = useGetProductById({ id });
    useEffect(() => {
       setDetails(data?.data)
    }, [data])
    const { mutateAsync: updateProduct, isLoading: loading } = useUpdateProduct()
+   const { mutateAsync: deleteProduct, isLoading: deleting } =useDeleteProduct()
    const handleChange = (e) => {
       setDetails(prev => ({ ...prev, [e.target.name]: e.target.value }));
    };
@@ -55,6 +57,7 @@ const EditProduct = () => {
             .then((res) => {
                if (res) {
                   toast.success(res?.message ?? "product updated successfully");
+                  navigate('/products')
                }
             })
             .catch((err) => {
@@ -64,6 +67,19 @@ const EditProduct = () => {
          console.error(error)
       }
    }
+
+   const handleDelete = () => {
+      deleteProduct(details)
+         .then((res) => {
+            if (res) {
+               toast.success(res?.message ?? "products deleted Successfully");
+               navigate('/products')
+            }
+         })
+         .catch((err) => {
+            toast.error(err?.message ?? "Something went wrong");
+         });
+   };
    return (
       <PageLayout
          title={'Edit Product'}
@@ -73,7 +89,7 @@ const EditProduct = () => {
                <Grid item container spacing={2} xs={12} sm={12} md={6} py={5}>
                   <Grid item xs={12} sm={12} md={6}>
                      <Input
-                        required
+                        required   
                         placeholder="Item name"
                         id="name"
                         name="name"
@@ -143,7 +159,7 @@ const EditProduct = () => {
                         onChange={handleChange}
                      />
                   </Grid>
-                  <Grid xs={12} pl={3} pt={2}>
+                  {/* <Grid xs={12} pl={3} pt={2}>
                      <Typography variant="body2">variations</Typography>
                   </Grid>
                   <Grid item xs={12} sm={4}>
@@ -169,7 +185,22 @@ const EditProduct = () => {
                         value={details?.type3 || ''}
                         onChange={handleChange}
                      />
-                  </Grid>
+                  </Grid> */}
+                  <Grid item xs={12} sm={6}>
+                  <Typography variant="caption">
+                  Product status &nbsp;
+                  </Typography>
+                  <ToggleButton
+                     value={details?.isAvailable}
+                     selected={details?.isAvailable}
+                     onChange={() => {
+                        setDetails(prev => ({ ...prev, isAvailable: !details?.isAvailable}))
+                     }}
+                     // onChange={handleChange}
+                  >
+                     {details?.isAvailable ? 'Active' : 'Blocked'}
+                  </ToggleButton>
+               </Grid>
                   <Grid item xs={12}>
                      <Input
                         id="description"
@@ -184,7 +215,7 @@ const EditProduct = () => {
                   <Grid item xs={12} sm={4} mt={'auto'}>
                      <Grid item xs={12}>
                         <Button onClick={handleSubmit}>UPDATE PRODUCT</Button>
-                        {/* <Button color="secondary" onClick={handleDelete}>Delete Blog</Button> */}
+                        <Button color="secondary" onClick={handleDelete}>Delete PRODUCT</Button>
                      </Grid>
                   </Grid>
                </Grid>

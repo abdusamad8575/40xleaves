@@ -8,9 +8,11 @@ import { useGetCategory } from 'queries/ProductQuery'
 import Typography from 'components/Typography'
 import { useAddProduct } from 'queries/ProductQuery'
 import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
 
 const AddProduct = () => {
   const [details, setDetails] = useState({})
+  const navigate= useNavigate()
   const { data, isLoading } = useGetCategory({ pageNo: 1, pageCount: 100 });
   const { mutateAsync: AddProduct, isLoading: loading } = useAddProduct()
   const [images, setImage] = useState([])
@@ -48,6 +50,7 @@ const AddProduct = () => {
       AddProduct(formData)
         .then((res) => {
           toast.success(res?.message ?? "category added");
+          navigate('/products')
         })
         .catch((err) => {
           toast.error(err?.message ?? "Something went wrong");
@@ -161,7 +164,7 @@ const AddProduct = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid xs={12} pl={3} pt={2}>
+          {/* <Grid xs={12} pl={3} pt={2}>
             <Typography variant="body2">variations</Typography>
           </Grid>
           <Grid item xs={12} sm={4}>
@@ -187,7 +190,7 @@ const AddProduct = () => {
               value={details?.type3 || ''}
               onChange={handleChange}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <Input
               id="description"

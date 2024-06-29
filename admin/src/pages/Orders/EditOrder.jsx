@@ -1,12 +1,13 @@
 import PageLayout from 'layouts/PageLayout';
 import { useGetOrderById } from 'queries/OrderQuery';
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Details from './Details';
 import { Avatar, Button, Grid, Link, Typography } from '@mui/material';
 
 const EditOrder = () => {
     const { id } = useParams()
+    const navigate = useNavigate()
     const [details, setDetails] = useState({})
     const { data, isLoading } = useGetOrderById({ id });
     useEffect(() => {

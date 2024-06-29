@@ -70,6 +70,7 @@ const EditBlog = () => {
             .then((res) => {
                if (res) {
                   toast.success(res?.message ?? "Blog added Successfully");
+                  navigate('/blogs')
                }
             })
             .catch((err) => {
