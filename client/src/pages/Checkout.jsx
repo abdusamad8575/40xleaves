@@ -99,7 +99,7 @@ useEffect(()=>{
 
       const response = await axiosInstance.get(urlQuery);
       setCartData(response.data.data)
-    //  console.log(response.data.data)
+      console.log('cart',response.data.data)
       const items = response.data.data.item;
 
 // Calculate the total sale price
@@ -208,9 +208,48 @@ console.log(totalProPrice)
       prevProducts.filter(product => product.id !== id)
     );
   };
+  //
+  
+  React.useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+       document.body.removeChild(script);
+    };
+ }, []);
 
-  const placeOrder = () => {
-    Swal.fire({
+  const handlePaymentSuccess = async () => {
+    const orderFormat ={}
+  
+     console.log('success')
+
+     const mappedCartItems = await cartData?.item.map((item) => ({
+      product_id: item.productId._id,
+      qty: item.qty,
+      price: item.productId.sale_rate
+    }));
+    
+    // Calculate the total price based on the cart items
+    const totalPrice = mappedCartItems.reduce((total, item) => total + (item.qty * item.price), 0);
+    
+    // Create the final 'products' object using the mapped cart items and total price
+    const productsOrderData = {
+      item: mappedCartItems,
+      totalPrice
+    };
+    
+    // Now 'products' object is ready to be used following the defined schema
+    console.log('Final Products Object:', productsOrderData);
+   
+  
+   
+     const response = await axiosInstance.post(`/api/v1/orders`,{payment_mode:paymentOption,amount:productsOrderData.totalPrice,
+      address:orderAddress._id,products:productsOrderData,
+     })
+  
+  Swal.fire({
       title: 'Success',
       text: 'Your order has been placed!',
       icon: 'success',
@@ -218,6 +257,33 @@ console.log(totalProPrice)
       timer: 3000
     });
     navigate('/');
+
+     
+   };
+
+
+  const placeOrder =async () => {
+
+console.log('payment ',paymentOption)
+
+const options = {
+  key: 'rzp_test_wNhVz81BFxrIrL',
+  amount: parseInt(1000) * 100, // amount in paisa
+  currency: 'INR',
+  name: 'TUT FINDER',
+  description: 'Purchase course',
+  handler: function (response) {
+     handlePaymentSuccess()
+  },
+ 
+};
+
+const rzp = new window.Razorpay(options);
+rzp.open()
+
+
+
+  
   };
 
   const progressPercentage = (currentStep / 3) * 100; 

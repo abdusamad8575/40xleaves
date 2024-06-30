@@ -10,7 +10,7 @@ function ProfileInfo() {
   const [phoneEditable, setPhoneEditable] = useState(false);
   const userDetails = useSelector(state => state.userDetails);
 
-  console.log('usrr',userDetails)
+  //console.log('usrr',userDetails)
 
   const handleEditName = () => {
     setNameEditable(true);
