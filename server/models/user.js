@@ -191,5 +191,4 @@ userSchema.statics.getCartWithProductsByUserId = async function(userId) {
 
 
 
-
 module.exports = mongoose.model('User', userSchema)

@@ -3,10 +3,10 @@ const router = Router();
 const authorization = require("../middlewares/authorization");
 const { getAddress, addAddress, updateAddress, deleteAddress,setPrimaryAddress } = require('../controllers/addressController');
 
-router.get('/', getAddress);
-router.post('/', addAddress);
-router.patch('/', updateAddress);
+router.get('/',authorization, getAddress);
+router.post('/',authorization, addAddress);
+router.patch('/',authorization, updateAddress);
 router.delete('/:id', authorization, deleteAddress);
-router.patch('/setprimary', setPrimaryAddress);
+router.patch('/setprimary',authorization, setPrimaryAddress);
 
 module.exports = router;

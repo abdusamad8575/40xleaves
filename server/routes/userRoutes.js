@@ -6,13 +6,13 @@ const { getUser, addToCart, removeFromCart, addToWishlist, removeFromWishlist, u
 //router.use(authorization)
 router.get('/', getUser);
 router.get('/getAllUsers', getUsers);
-router.patch('/updateQty', updateQty);
-router.patch('/addToCart/:id', addToCart);
-router.patch('/removeFromCart/:id', removeFromCart);
-router.patch('/addToWishlist/:id', addToWishlist);
-router.patch('/removeFromWishlist/:id', removeFromWishlist);
-router.get('/getwishlist', getWishLists);
-router.get('/getcarts', getCartDetailsByUserId); 
+router.patch('/updateQty',authorization, updateQty);
+router.patch('/addToCart/:id',authorization, addToCart);
+router.patch('/removeFromCart/:id',authorization, removeFromCart);
+router.patch('/addToWishlist/:id',authorization, addToWishlist);
+router.patch('/removeFromWishlist/:id',authorization, removeFromWishlist);
+router.get('/getwishlist',authorization, getWishLists);
+router.get('/getcarts', authorization,getCartDetailsByUserId); 
 
 module.exports = router;
  

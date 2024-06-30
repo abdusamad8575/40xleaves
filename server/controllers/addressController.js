@@ -2,8 +2,8 @@ const Address = require('../models/address')
 
 const getAddress = async (req, res) => {
   try {
-   // const { _id } = req.decoded
-   const _id =  '66796d0936bb97720a7764f4';
+    const { _id } = req.decoded
+  // const _id =  '66796d0936bb97720a7764f4';
 
     const data = await Address.find({ userId:_id })
     res.status(200).json({ data })
@@ -15,10 +15,11 @@ const getAddress = async (req, res) => {
    
 const addAddress = async (req, res) => {
   const {   firstname, lastname, country, address_line_1, address_line_2, city, state, zip, mobile, primary } = req?.body
-  const userId = '66796d0936bb97720a7764f4';
+ // const userId = '66796d0936bb97720a7764f4';
+ const { _id } = req?.decoded
   try {
     const data = await Address.create({
-      userId, firstname, lastname, country, address_line_1, address_line_2, city, state, zip, mobile, primary
+      userId:_id, firstname, lastname, country, address_line_1, address_line_2, city, state, zip, mobile, primary
     })
     res.status(201).json({ data, message: 'Address created successfully' });
   } catch (error) {
@@ -51,11 +52,12 @@ const deleteAddress = async (req, res) => {
 }
  const setPrimaryAddress = async (req, res) => {
   const {   addressId } = req.body;
-  const userId = '66796d0936bb97720a7764f4';
+ // const userId = '66796d0936bb97720a7764f4';
+ const { _id } = req?.decoded
   try {
       // Set all addresses' primary to false for the user
       await Address.updateMany(
-          { userId: userId, primary: true },
+          { userId: _id, primary: true },
           { primary: false }
       );
 
