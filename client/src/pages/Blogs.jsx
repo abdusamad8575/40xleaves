@@ -1,10 +1,51 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
+import axiosInstance from '../axios'
 import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
 import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
 
 const Blogs = () => {
+  const [blog,setBlog] = useState([])
+
+let urlQuery = '';
+
+  useEffect(()=>{
+
+    urlQuery=`/api/v1/blogs`
+
+    const fetchData = async()=>{
+
+      try {
+
+        const response = await axiosInstance.get(urlQuery);
+        setBlog(response.data.data)
+        console.log(response.data.data)
+        
+      } catch (error) {
+        console.log(error)
+      }
+
+    }
+
+
+    fetchData()
+
+
+  },[])
+
+  //date format
+  const formatDate = (createdAt) => {
+    const date = new Date(createdAt);
+    const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
+  
+    return `${formattedDate} `;
+  };
+  
+  
+
+
   // Dummy data for demonstration
   const blogs = [
     {
@@ -34,14 +75,14 @@ const Blogs = () => {
       <div className="container py-5">
         <h2 className="mb-4 text-center">Blogs</h2>
         <div className="row">
-          {blogs.map(blog => (
-            <div className="col-lg-6 mb-4" key={blog.id}>
+          {blog.map(item => (
+            <div className="col-lg-6 mb-4" key={item._id}>
               <div className="card border-0 shadow">
-                <img src={blog.imageUrl} className="card-img-top" alt={blog.title} />
+                <img src={`http://localhost:5000/uploads/${item.image}`} className="card-img-top" alt={item.title} />
                 <div className="card-body">
-                  <h5 className="card-title">{blog.title}</h5>
-                  <p className="card-text">{blog.content}</p>
-                  <p className="card-text"><small className="text-muted">By {blog.author} on {blog.date}</small></p>
+                  <h5 className="card-title">{item.title}</h5>
+                  <p className="card-text">{item.description}</p>
+                  <p className="card-text"><small className="text-muted">By Microgreen on {formatDate(item.createdAt)}</small></p>
                 </div>
               </div>
             </div>

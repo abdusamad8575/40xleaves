@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
+import axiosInstance from '../axios'
 import { Col, Row } from 'react-bootstrap'
 import Footer from '../components/Footer'
 import MainNav from '../components/MainNav'
@@ -14,6 +15,7 @@ function Profile() {
     const navigate = useNavigate()
     const[profile , setProfile]= useState(true)
     const[address , setAddress] = useState(false)
+ 
 
     const profileinfo=()=>{
        setProfile(true)

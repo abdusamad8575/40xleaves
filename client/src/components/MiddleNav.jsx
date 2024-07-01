@@ -1,11 +1,28 @@
 import React from 'react';
 import logo from '../assets/images/logo.png';
 import { Link } from 'react-router-dom';
+import { useDispatch,useSelector } from 'react-redux';
+import { clearUserDetails } from '../redux/actions/userActions';
+import { useNavigate } from 'react-router-dom';
+
 
 function MiddleNav() {
- 
+  const dispatch = useDispatch();
+  const userDetails = useSelector(state => state.userDetails);
+  const navigate = useNavigate();
+
+
   const cartItemCount = 3;
   const wishlistItemCount = 2;
+
+  const logoutUser = () => {
+    // Dispatch the clearUserDetails action to log out the user
+    dispatch(clearUserDetails());
+
+    localStorage.removeItem('Tokens');
+
+    navigate('/')
+  };
 
   return (
     <div className='bg-success-subtle'>
@@ -21,7 +38,7 @@ function MiddleNav() {
           </div>
           <div>
             <div>
-              <Link to={'/cart'}>
+              <Link to={userDetails ?  '/cart' : '/login'}>
                 <button className='btn btn-light me-3 position-relative'>
                   <i className="fa-solid fa-cart-shopping"></i>
                   {cartItemCount > 0 && (
@@ -33,7 +50,7 @@ function MiddleNav() {
                 </button>
               </Link>
 
-             <Link to={'/wishlist'}>
+             <Link to={userDetails ?  '/wishlist' : '/login'}>
                 <button className='btn btn-light me-3 position-relative'>
                   <i className="fa-solid fa-heart"></i>
                   {wishlistItemCount > 0 && (
@@ -44,7 +61,12 @@ function MiddleNav() {
                   )}
                 </button>
              </Link>
-             <Link to={'/login'}> <button className='btn btn-success'>Login</button></Link>
+{  userDetails ?  (              <button className='btn btn-success' onClick={logoutUser} >Logout</button> 
+):(             <Link to={'/login'}> <button className='btn btn-success'>Login</button></Link>
+)
+
+
+             }
             </div>
           </div>
         </div>

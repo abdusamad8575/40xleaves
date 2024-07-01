@@ -23,6 +23,9 @@ const getCategoryById = async (req, res) => {
 
 const addCategory = async (req, res) => {
   console.log('hello');
+
+console.log('reached category')
+
   const { name, desc } = req?.body
   const image = req?.file?.filename
   try {
@@ -34,7 +37,7 @@ const addCategory = async (req, res) => {
     const category = name.toUpperCase()
     const isExisting = arr.findIndex(x => x == category)
     if (isExisting === -1) {
-      const cat = new Category({ name, desc, image })
+      const cat = new Category({ name:name.toUpperCase(), desc, image })
       await cat.save()
       res.status(201).json({ data: cat, message: 'category created successfully' });
     } else {
