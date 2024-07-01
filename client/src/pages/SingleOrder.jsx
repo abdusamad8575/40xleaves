@@ -1,14 +1,44 @@
 import React, { useState, useEffect } from 'react';
+import axiosInstance from '../axios'
+
 import { Container, Row, Col, Card, ListGroup } from 'react-bootstrap';
 import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
 import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
+import { useParams } from 'react-router-dom';
+
 import './SingleOrder.css';
 
 function SingleOrder() {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('order_confirmed');
+  const { orderId } = useParams();
+  const [ordersData,setOrdersData] = useState({})
+  const [address,setAddress] = useState({})
+  const [productsData,setProductsData] = useState([])
+
+
+ // console.log('ord id :',orderId)
+  const fetchOrderData  = async()=>{
+
+    try {
+      const response = await axiosInstance.get(`/api/v1/orders/getorderbyid/${orderId}`)
+      setOrdersData(response.data.data)
+      setAddress(response.data.data.address)
+      setProductsData(response.data.data.products.item)
+      console.log('order by id :',response.data.data)
+      console.log('address :',response.data.data.address)
+    } catch (error) {
+      
+    }
+  }
+  
+  
+  useEffect(()=>{
+  fetchOrderData()
+  },[])
+
 
   // Sample data from backend, you should replace this with your actual data fetching logic
   const dataFromBackend = {
@@ -59,6 +89,7 @@ function SingleOrder() {
         break;
     }
   }, [dataFromBackend]);
+  //["Pending", "Placed", "Shipped", "Out_of_delivery", "Delivered", "Delayed", "Canceled"]
 
   const renderProgressBar = () => {
     const steps = [
@@ -68,6 +99,7 @@ function SingleOrder() {
       { name: 'Delivered', completed: progress >= 100 },
     ];
 
+    
     return (
       <div className="progress-container mb-4">
         <div className="progress-bar" style={{ width: `${progress}%` }}></div>
@@ -84,28 +116,38 @@ function SingleOrder() {
     );
   };
 
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <>
       <TopNav />
       <MiddleNav />
       <MainNav />
       <Container className="mt-4 mb-4">
-        <Card className="shadow">
-          <Card.Body>
-            <Row className="align-items-center">
+       
+         
+            {
+             productsData.map((item,index)=>(
+                <Card className="shadow" key={index} >
+                <Card.Body>
+ <Row className="align-items-center">
               <Col md={3} className="mb-3 mb-md-0">
                 <div className="d-flex align-items-center">
                   <div className="me-3">
                     <img
-                      src={dataFromBackend.orderDetails.items[0].imageUrl}
+                       src={`http://localhost:5000/uploads/${item.product_id.image[0]}`}
                       alt=""
                       className="img-fluid"
                     />
                   </div>
                   <div>
-                    <h5>{dataFromBackend.orderDetails.items[0].name}</h5>
-                    <p className="text-muted mb-0">{dataFromBackend.orderDetails.items[0].category}</p>
-                    <h5 className="mb-0">₹{dataFromBackend.orderDetails.items[0].price}</h5>
+                    <h5>{item.product_id.name}</h5>
+                    <p className="text-muted mb-0">{ordersData.payment_mode}</p>
+                    <h5 className="mb-0">₹{item.price}</h5>
                   </div>
                 </div>
               </Col>
@@ -113,7 +155,7 @@ function SingleOrder() {
                 <div className="text-center">
                   {renderProgressBar()}
                   <h6 className="text-muted mb-0">
-                    <span className="fw-bold text-dark">{status.replace(/_/g, ' ')}</span>
+                    <span className="fw-bold text-dark">{ordersData.status}</span>
                   </h6>
                 </div>
               </Col>
@@ -130,8 +172,14 @@ function SingleOrder() {
                 </div>
               </Col>
             </Row>
-          </Card.Body>
-        </Card>
+            </Card.Body>
+             </Card>
+              ))
+             
+            }
+
+          
+       
         <Card className="shadow mt-4">
           <Card.Body>
             <h5>Order Details</h5>
@@ -139,19 +187,19 @@ function SingleOrder() {
               <ListGroup.Item>
                 <div className="d-flex justify-content-between">
                   <span>Order ID</span>
-                  <span>{dataFromBackend.orderDetails.orderId}</span>
+                  <span>{ordersData._id}</span>
                 </div>
               </ListGroup.Item>
               <ListGroup.Item>
                 <div className="d-flex justify-content-between">
                   <span>Order Date</span>
-                  <span>{dataFromBackend.orderDetails.orderDate}</span>
+                  <span>{formatDate(ordersData.createdAt)}</span>
                 </div>
               </ListGroup.Item>
               <ListGroup.Item>
                 <div className="d-flex justify-content-between">
                   <span>Total</span>
-                  <span>₹{dataFromBackend.orderDetails.total}</span>
+                  <span>₹{ordersData.amount}</span>
                 </div>
               </ListGroup.Item>
             </ListGroup>
@@ -164,22 +212,22 @@ function SingleOrder() {
               <ListGroup.Item>
                 <div className="d-flex justify-content-between">
                   <span>Name</span>
-                  <span>{dataFromBackend.orderDetails.shippingAddress.name}</span>
+                  <span>{address.firstname} {address.lastname}</span>
                 </div>
               </ListGroup.Item>
               <ListGroup.Item>
                 <div className="d-flex justify-content-between">
                   <span>Address</span>
-                  <span>{dataFromBackend.orderDetails.shippingAddress.address}</span>
+                  <span>{address.address_line_1} <br />{address.address_line_2} </span>
                 </div>
               </ListGroup.Item>
               <ListGroup.Item>
                 <div className="d-flex justify-content-between">
                   <span>City, State, ZIP</span>
                   <span>
-                    {dataFromBackend.orderDetails.shippingAddress.city},{' '}
-                    {dataFromBackend.orderDetails.shippingAddress.state}{' '}
-                    {dataFromBackend.orderDetails.shippingAddress.zip}
+                    {address.city},{' '}
+                    {address.state}{' '}
+                    {address.zip}
                   </span>
                 </div>
               </ListGroup.Item>

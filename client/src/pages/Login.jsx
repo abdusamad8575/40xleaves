@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axiosInstance from '../axios';
+import { useNavigate } from 'react-router-dom';
+
 import { Col, Row } from 'react-bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
@@ -7,11 +10,43 @@ import logo from '../assets/images/logo.png';
 
 const Login = () => {
   const [userDetails, setUserDetails] = useState({
-    username: "",
     email: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axiosInstance.post('/api/v1/auth/login', userDetails);
+      localStorage.setItem(
+        "Tokens",
+        JSON.stringify({ access: response.data.data.token.accessToken, refresh: response.data.data.token.refreshToken })
+      );
+      console.log('resss ', response.data);
+
+ if(response.data.proceed){
+
+   navigate('/')
+
+ }
+
+    } catch (error) {
+      console.error('Error during registration: ', error);
+     // navigate('/register')
+      // Handle error (e.g., show an error message to the user)
+    }
+  };
+
 
   return (
    <>
@@ -47,22 +82,33 @@ const Login = () => {
                 <h3>Login</h3>
                 <p> Unlocking Doors to Innovation </p>
               </div>
+              <Form onSubmit={handleSubmit}>
               <div>
+          
                 <FloatingLabel
                   controlId="floatingInput"
                   label="Email address"
                   className="mb-3"
+
                 >
-                  <Form.Control type="email" placeholder="name@example.com" />
+                  <Form.Control type="email"
+                   name="email"
+                    placeholder="name@example.com"
+                  value={userDetails.email}
+                  onChange={handleChange} />
                 </FloatingLabel>
                 <FloatingLabel
                   controlId="floatingPassword"
                   label="Password"
                   className="position-relative"
                 >
+
                   <Form.Control
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
+                     name="password"
+                    value={userDetails.password}
+                    onChange={handleChange}
                   />
                   <span
                     className="position-absolute top-50 end-0 translate-middle-y me-3"
@@ -82,6 +128,7 @@ const Login = () => {
                   </span>
                 </div>
               </div>
+              </Form>
             </Col>
           </Row>
         </div>

@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import axiosInstance from '../axios'
+
 import { Link } from 'react-router-dom';
 import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
@@ -6,6 +8,97 @@ import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
 
 function Cart() {
+const [cartData,setCartData] = useState([])
+const [salePriceTotal,setSalePriceTotal] = useState(0)
+const [proPriceTotal,setProPriceTotal] = useState(0)
+const [discountTotal,setDiscountTotal] = useState(0)
+
+
+const calculateTotalSalePrice = (items) => {
+  let totalSalePrice = 0;
+
+  items.forEach((item) => {
+   
+  
+    
+    // Add the sale_rate to the totalSalePrice
+    totalSalePrice +=item.productId.sale_rate;
+  });
+
+  return totalSalePrice;
+};
+const calculateTotalProPrice = (items) => {
+  let totalSalePrice = 0;
+
+  items.forEach((item) => {
+   
+  
+    
+    // Add the sale_rate to the totalSalePrice
+    totalSalePrice +=item.productId.price;
+  });
+
+  return totalSalePrice;
+};
+const calculateTotalDiscountPrice = (items) => {
+  let totalSalePrice = 0;
+
+  items.forEach((item) => {
+   
+  
+    
+    // Add the sale_rate to the totalSalePrice
+    totalSalePrice +=item.productId.discount;
+  });
+
+  return totalSalePrice;
+};
+
+let urlQuery = '';
+
+useEffect(()=>{
+
+  urlQuery=`/api/v1/user/getcarts`
+
+  const fetchData = async()=>{
+
+    try {
+
+      const response = await axiosInstance.get(urlQuery);
+      setCartData(response.data.data)
+      console.log(response.data.data)
+      const items = response.data.data.item;
+
+// Calculate the total sale price
+const totalSalePrice = calculateTotalSalePrice(items);
+console.log(totalSalePrice)
+    setSalePriceTotal(totalSalePrice)
+
+    // Calculate the total  price
+const totalProPrice = calculateTotalProPrice(items);
+console.log(totalProPrice)
+    setProPriceTotal(totalProPrice)
+
+    // Calculate the total discount
+const totalDiscount = calculateTotalDiscountPrice(items);
+console.log(totalDiscount)
+    setDiscountTotal(totalDiscount)
+      
+
+
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+
+  fetchData()
+
+
+},[])
+
+
   const initialCartItems = [
     {
       id: 1,
@@ -32,7 +125,23 @@ function Cart() {
 
   const [cartItems, setCartItems] = useState(initialCartItems);
 
-  const handleQuantityChange = (itemId, operation) => {
+  const handleQtyChange = async (qty,proId) =>{
+
+    urlQuery=`/api/v1/user/updateQty`
+     try {
+      const response = await axiosInstance.patch(urlQuery,{qty,productId:proId});
+
+     } catch (error) {
+      console.log(error)
+     }
+
+  }
+
+  const handleQuantityChange =async (itemId, operation) => {
+
+ 
+
+
     setCartItems(prevCartItems =>
       prevCartItems.map(item =>
         item.id === itemId
@@ -48,10 +157,29 @@ function Cart() {
     );
   };
 
-  const handleRemoveItem = itemId => {
-    setCartItems(prevCartItems =>
-      prevCartItems.filter(item => item.id !== itemId)
-    );
+  const handleRemoveItem =async (itemId) => {
+   console.log('cart id ',itemId)
+    urlQuery=`/api/v1/user/removeFromCart/${itemId}`
+
+
+   try {
+    const response = await axiosInstance.patch(urlQuery);
+    const updatedCartItems = cartData.item.filter((item) => item._id !== itemId);
+    const updatedTotalPrice = updatedCartItems.reduce((acc, item) => acc + (item.price * item.qty), 0);
+
+    setCartData({
+        ...cartData,
+        item: updatedCartItems,
+        totalPrice: updatedTotalPrice
+    });
+
+   // console.log('Updated cart ', updatedCartItems);
+   // console.log("Item removed from cart:");
+} catch (error) {
+    console.error("Error removing item from wishlist:", error);
+ 
+}
+ 
   };
 
   const subtotal = cartItems.reduce(
@@ -74,7 +202,7 @@ function Cart() {
         <h1 className="text-success mb-4 text-center ">
           <i className="fas fa-shopping-cart me-2"></i> Cart
         </h1>
-        {cartItems.length === 0 ? (
+        {cartData?.item?.length === 0 ? (
           <div className="text-center">
             <p className="text-muted">No items in the cart</p>
             <Link to={'/allproducts'}>
@@ -86,36 +214,37 @@ function Cart() {
         ) : (
           <div className="row">
             <div className="col-md-8">
-              {cartItems.map(item => (
-                <div key={item.id} className="card mb-3 border-success p-3 shadow">
+              {cartData?.item?.map(item => (
+                <div key={item._id} className="card mb-3 border-success p-3 shadow">
                   <div className="row g-0">
                     <div className="col-md-4 col-5 d-flex align-items-center ">
                       <img
-                        src={item.image}
+                         src={`http://localhost:5000/uploads/${item.productId.image[0]}`}
+
                         className="img-fluid rounded"
                         alt={item.name}
                       />
                     </div>
                     <div className="col-md-8 col-7">
                       <div className="card-body">
-                        <h5 className="card-title text-success">{item.name}</h5>
-                        <p className='text-muted'>Microgreen</p>
-                        <p className="card-text fw-bold ">₹{item.price}</p>
-                        <span className='m-1 text-muted text-decoration-line-through'>₹999</span>
-                        <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
+                        <h5 className="card-title text-success">{item.productId.name}</h5>
+                        <p className='text-muted'>{item.productId.brand}</p>
+                        <p className="card-text fw-bold ">₹{item.productId.sale_rate}</p>
+                        <span className='m-1 text-muted text-decoration-line-through'>₹{item.productId.price}</span>
+                        <span className='text-success fw-bold bg-success-subtle p-1'>{item.productId.discount}% off</span>
                         <div className="d-flex align-items-center justify-content-between mt-3">
                           <div className="d-flex justify-content-center align-items-center ">
                             <button
                               className="btn btn-outline-success rounded-circle"
-                              onClick={() => handleQuantityChange(item.id, 'decrement')}
+                              onClick={() => handleQuantityChange(item._id, 'decrement')}
                               disabled={item.quantity === 1}
                             >
                               <i className="fas fa-minus"></i>
                             </button>
-                            <span className="mx-3 fw-bold">{item.quantity}</span>
+                            <span className="mx-3 fw-bold">{item.qty}</span>
                             <button
                               className="btn btn-outline-success rounded-circle"
-                              onClick={() => handleQuantityChange(item.id, 'increment')}
+                              onClick={() => handleQuantityChange(item._id, 'increment')}
                             >
                               <i className="fas fa-plus"></i>
                             </button>
@@ -123,7 +252,7 @@ function Cart() {
                         <div>
                           <button
                             className="btn btn-outline-danger rounded-pill ms-2 "
-                            onClick={() => handleRemoveItem(item.id)}
+                            onClick={() => handleRemoveItem(item._id)}
                           ><i className="fas fa-trash"></i></button>
                         </div>
                         </div>
@@ -141,12 +270,12 @@ function Cart() {
                     <i className="fas fa-receipt me-2"></i>Order Summary
                   </h5>
                   <div>
-                    <p>Price: ₹{subtotal.toFixed(2)}</p>
-                    <p>Discount: ₹{discount}</p>
-                    <p>Delivery Charges: ₹{deliveryCharges}</p>
+                    <p>Price: ₹{proPriceTotal}</p>
+                    <p>Discount: ₹{proPriceTotal-salePriceTotal}</p>
+                    <p  >Delivery Charges: ₹{deliveryCharges}</p>
                     <hr />
                     <p className="card-text fw-bold">
-                      Total Amount: ₹{totalAfterDiscount.toFixed(2)}
+                      Total Amount: ₹{salePriceTotal}
                     </p>
                   </div>
                   <Link to={'/checkout'}>

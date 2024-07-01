@@ -40,7 +40,7 @@ const addressSchema = new mongoose.Schema({
     },
     mobile: {
         type: Number,
-        required: true
+        required: true 
     },
     primary: {
         type: Boolean,

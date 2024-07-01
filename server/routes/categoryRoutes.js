@@ -5,7 +5,7 @@ const { getCategory, addCategory, deleteCategory } = require('../controllers/cat
 const { upload } = require('../middlewares/multer');
 
 router.get('/', getCategory);
-router.post("/", authorization, upload.single('image'), addCategory);
+router.post("/", upload.single('image'), addCategory);
 // router.patch("/:id",authorization, updateCategory);
 router.delete("/", authorization, deleteCategory);
 
