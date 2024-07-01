@@ -16,7 +16,7 @@ import { setUserDetails, clearUserDetails } from '../redux/actions/userActions';
 
 function Home() {
   const dispatch = useDispatch();
- 
+ const [notif,setNotif] = useState(true)
 
 
 
@@ -36,12 +36,12 @@ function Home() {
 
   return (
     <div>
-     <TopNav/>
-     <MiddleNav/>
-     <MainNav/> 
+     <TopNav />
+     <MiddleNav notification={notif} />
+     <MainNav  /> 
      <Banner/>
      <Category/>
-     <Products/>
+     <Products setNotification={setNotif} />
      <Brands/>
      <Testimonial/>
      <Footer/>

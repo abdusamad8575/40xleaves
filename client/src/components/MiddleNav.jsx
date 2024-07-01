@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react'
+import axiosInstance from '../axios'
 import logo from '../assets/images/logo.png';
 import { Link } from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
@@ -6,21 +7,68 @@ import { clearUserDetails } from '../redux/actions/userActions';
 import { useNavigate } from 'react-router-dom';
 
 
-function MiddleNav() {
+function MiddleNav({notification}) {
   const dispatch = useDispatch();
   const userDetails = useSelector(state => state.userDetails);
   const navigate = useNavigate();
 
+  const [wishListData,setWishListData] = useState()
+  const [cartData,setCartData] = useState([])
 
-  const cartItemCount = 3;
-  const wishlistItemCount = 2;
+let urlQuery = '';
+
+useEffect(()=>{
+
+  urlQuery=`/api/v1/user/getcarts`
+
+  const fetchData = async()=>{
+
+    try {
+
+      const response = await axiosInstance.get(urlQuery);
+      setCartData(response.data.data.item.length)
+      console.log(response.data.data.item.length)
+
+    }catch(error){
+      
+    }
+  }
+
+  fetchData()
+    },[notification])
+
+  useEffect(()=>{
+ 
+    
+ 
+     const fetchData = async()=>{
+ 
+       try {
+ 
+         const response = await axiosInstance.get(`/api/v1/user/getwishlist`);
+         setWishListData(response.data.data.length)
+         console.log(response.data.data.length)
+         
+       } catch (error) {
+         console.log(error)
+       }
+ 
+     }
+ 
+ 
+     fetchData()
+ 
+ 
+   },[notification])
+
+  
 
   const logoutUser = () => {
     // Dispatch the clearUserDetails action to log out the user
     dispatch(clearUserDetails());
 
     localStorage.removeItem('Tokens');
-
+    window.location.reload();
     navigate('/')
   };
 
@@ -41,9 +89,9 @@ function MiddleNav() {
               <Link to={userDetails ?  '/cart' : '/login'}>
                 <button className='btn btn-light me-3 position-relative'>
                   <i className="fa-solid fa-cart-shopping"></i>
-                  {cartItemCount > 0 && (
+                  {cartData > 0 && (
                     <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
-                      {cartItemCount}
+                      {cartData}
                       <span className="visually-hidden">items in cart</span>
                     </span>
                   )}
@@ -53,9 +101,9 @@ function MiddleNav() {
              <Link to={userDetails ?  '/wishlist' : '/login'}>
                 <button className='btn btn-light me-3 position-relative'>
                   <i className="fa-solid fa-heart"></i>
-                  {wishlistItemCount > 0 && (
+                  {wishListData > 0 && (
                     <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
-                      {wishlistItemCount}
+                      {wishListData}
                       <span className="visually-hidden">items in wishlist</span>
                     </span>
                   )}

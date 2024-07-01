@@ -4,7 +4,24 @@ import image from '../assets/images/banner.jpg';
 import { Col, Container, Row } from 'react-bootstrap';
 
 function Brands() {
+  const [brands,setbrands] = useState([])
+
+const fetchData = async()=>{
+
+try {
+  const urlQuery = `/api/v1/brands`
+  const response = await axiosInstance.get(urlQuery);
+  setbrands(response.data.data)
+
+} catch (error) {
   
+}
+}
+
+useEffect(()=>{
+  fetchData()
+},[])
+
 
 
     const categories = [
@@ -41,10 +58,10 @@ function Brands() {
    
         <h3 className='text-center m-5 fw-bold '>Brands We Work With</h3>
         <Row className='d-flex justify-content-center align-content-center '>
-          {categories.map((category, index) => (
+          {brands.map((item, index) => (
             <Col key={index} xs={3}  lg={3} className="category-item">
               <div className="category-content text-center ">
-                <img src={category.imageUrl} alt={category.name} width={150} className="img-fluid rounded"/>
+                <img   src={`http://localhost:5000/uploads/${item.image}`} alt={item.name} width={150} className="img-fluid rounded"/>
               </div>
             </Col>
           ))}

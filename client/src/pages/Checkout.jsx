@@ -265,22 +265,31 @@ console.log(totalProPrice)
   const placeOrder =async () => {
 
 console.log('payment ',paymentOption)
+if(paymentOption === 'cod'){
 
-const options = {
-  key: 'rzp_test_wNhVz81BFxrIrL',
-  amount: parseInt(1000) * 100, // amount in paisa
-  currency: 'INR',
-  name: 'TUT FINDER',
-  description: 'Purchase course',
-  handler: function (response) {
-     handlePaymentSuccess()
-  },
- 
-};
+  handlePaymentSuccess()
 
-const rzp = new window.Razorpay(options);
-rzp.open()
+}else if(paymentOption === 'razorpay' ){
+  const options = {
+    key: 'rzp_test_wNhVz81BFxrIrL',
+    amount: parseInt(1000) * 100, // amount in paisa
+    currency: 'INR',
+    name: 'TUT FINDER',
+    description: 'Purchase course',
+    handler: function (response) {
+       handlePaymentSuccess()
+    },
+   
+  };
+  
+  const rzp = new window.Razorpay(options);
+  rzp.open()
+  
+  
+  
 
+
+}
 
 
   

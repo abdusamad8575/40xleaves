@@ -24,6 +24,7 @@ const Allproducts = () => {
  const navigate = useNavigate();
  const [wishlistItems, setWishlistItems] = useState([]);
  const [cartItems, setCartItems] = useState([]);
+ const [notif,setNotif] = useState(true)
 
 let urlQuery = ''
 urlQuery = `/api/v1/products?page=${page}&limit=${limit}&sortField=createdAt&sortOrder=desc`
@@ -168,6 +169,7 @@ setPage(1)
               urlQuery = `/api/v1/user/addToWishlist/${proId}`
               const response = await axiosInstance.patch(urlQuery);
               await fetchWishlist();
+              setNotif(prev => !prev);
               //console.log(response)
             } catch (error) {
               console.log(error)
@@ -188,6 +190,7 @@ setPage(1)
               urlQuery = `/api/v1/user/removeFromWishlist/${proId}`
               const response = await axiosInstance.patch(urlQuery);
               await fetchWishlist();
+              setNotif(prev => !prev);
         //console.log(response)
             } catch (error) {
               console.log(error)
@@ -206,6 +209,7 @@ setPage(1)
               urlQuery = `/api/v1/user/addToCart/${proId}`
               const response = await axiosInstance.patch(urlQuery);
             await  fetchCart()
+            setNotif(prev => !prev);
               //console.log(response)
             } catch (error) {
               console.log(error)
@@ -231,6 +235,7 @@ setPage(1)
                   urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
                   const response = await axiosInstance.patch(urlQuery);
                 await  fetchCart()
+                setNotif(prev => !prev);
             //console.log(response)
                 } catch (error) {
                   console.log(error)
@@ -253,7 +258,7 @@ setPage(1)
   return (
     <>
       <TopNav />
-      <MiddleNav />
+      <MiddleNav notification={notif} />
       <MainNav />
       <div className="container py-5">
         <div className="row">

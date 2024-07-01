@@ -19,6 +19,8 @@ function Product() {
   const { proId } = useParams();
   const [cartItems, setCartItems] = useState([]);
   const userDetails = useSelector(state => state.userDetails);
+  const [notif,setNotif] = useState(true)
+
 
   const fetchData = async()=>{
   
@@ -60,6 +62,7 @@ fetchCart()
            const   urlQuery = `/api/v1/user/addToCart/${proId1}`
               const response = await axiosInstance.patch(urlQuery);
             await  fetchCart()
+            setNotif(prev => !prev);
               //console.log(response)
             } catch (error) {
               console.log(error)
@@ -85,6 +88,7 @@ fetchCart()
               const    urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
                   const response = await axiosInstance.patch(urlQuery);
                 await  fetchCart()
+                setNotif(prev => !prev);
             //console.log(response)
                 } catch (error) {
                   console.log(error)
@@ -180,7 +184,7 @@ const isInCart = (productId) => {
   return (
    <>
      <TopNav/>
-     <MiddleNav/>
+     <MiddleNav notification={notif} />
      <MainNav/> 
       <div>
         <Container className="product-details-container my-5">
