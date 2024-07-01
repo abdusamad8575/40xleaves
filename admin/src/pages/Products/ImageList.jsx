@@ -22,6 +22,7 @@ const ImageList = ({ data = [], dispatch }) => {
    };
 
    const handleRemoveImage = (index) => {
+      console.log('index',index);
       if (data?.length === 1) {
          toast.error('Atleast 1 image is required')
          return
