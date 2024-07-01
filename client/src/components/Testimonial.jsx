@@ -1,10 +1,29 @@
-import React from 'react'
-import Slider from 'react-slick';
+import React, { useEffect, useState } from 'react';
+ import axiosInstance from '../axios'
+ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css'; 
 import 'slick-carousel/slick/slick-theme.css';
 import { Col, Container, Row } from 'react-bootstrap';
 
 function Testimonial() {
+  const [testimonials,setTestimonials] = useState([])
+
+const fetchData = async()=>{
+
+try {
+  const urlQuery = `/api/v1/testimonials`
+  const response = await axiosInstance.get(urlQuery);
+  setTestimonials(response.data.data)
+
+} catch (error) {
+  
+}
+}
+
+useEffect(()=>{
+  fetchData()
+},[])
+
     const settings = {
         dots: true,
         infinite: true,
@@ -43,10 +62,14 @@ function Testimonial() {
           <Row>
             <Col>
               <Slider {...settings}>
-                {items.map(item => (
-                  <div key={item.id} className='text-center'>
-                    <article className='p-3'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ab repellat nostrum expedita, tenetur sint facere sit asperiores mollitia, architecto nisi maxime! Soluta veniam repudiandae dignissimos omnis ea unde labore quae!</article>
-                    <img src={item.imageUrl} alt={item.name}  className="img-fluid mx-auto rounded-circle " width={80} />
+                {testimonials.map(item => (
+                  <div key={item._id} className='text-center'>
+                    <article className='p-3'>{item.comment}</article>
+                    <img
+            src={`http://localhost:5000/uploads/${item.image}`}
+            alt={item.name}  className="img-fluid mx-auto rounded-circle " width={80} />
+<p>{item.name}</p>
+
                   </div>
                 ))}
               </Slider>

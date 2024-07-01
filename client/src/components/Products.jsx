@@ -9,7 +9,7 @@ import {  useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 
-function Products() {
+function Products({setNotification}) {
 const [products,setProducts] = useState([]);
 const [wishlistItems, setWishlistItems] = useState([]);
 const [cartItems, setCartItems] = useState([]);
@@ -83,6 +83,7 @@ const userDetails = useSelector(state => state.userDetails);
               const response = await axiosInstance.patch(urlQuery);
               await fetchWishlist();
               //console.log(response)
+              setNotification(prev => !prev);
             } catch (error) {
               console.log(error)
             
@@ -102,6 +103,7 @@ const userDetails = useSelector(state => state.userDetails);
               urlQuery = `/api/v1/user/removeFromWishlist/${proId}`
               const response = await axiosInstance.patch(urlQuery);
               await fetchWishlist();
+              setNotification(prev => !prev);
         //console.log(response)
             } catch (error) {
               console.log(error)
@@ -120,6 +122,7 @@ const userDetails = useSelector(state => state.userDetails);
               urlQuery = `/api/v1/user/addToCart/${proId}`
               const response = await axiosInstance.patch(urlQuery);
             await  fetchCart()
+            setNotification(prev => !prev);
               //console.log(response)
             } catch (error) {
               console.log(error)
@@ -145,6 +148,7 @@ const userDetails = useSelector(state => state.userDetails);
                   urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
                   const response = await axiosInstance.patch(urlQuery);
                 await  fetchCart()
+                setNotification(prev => !prev);
             //console.log(response)
                 } catch (error) {
                   console.log(error)

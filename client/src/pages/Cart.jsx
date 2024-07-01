@@ -166,13 +166,22 @@ console.log(totalDiscount)
     const response = await axiosInstance.patch(urlQuery);
     const updatedCartItems = cartData.item.filter((item) => item._id !== itemId);
     const updatedTotalPrice = updatedCartItems.reduce((acc, item) => acc + (item.price * item.qty), 0);
-
+    setProPriceTotal(null)
+    setSalePriceTotal(null)
     setCartData({
         ...cartData,
         item: updatedCartItems,
         totalPrice: updatedTotalPrice
     });
-
+   // Calculate the total sale price
+   const totalSalePrice = calculateTotalSalePrice(updatedCartItems);
+   console.log(totalSalePrice)
+       setSalePriceTotal(totalSalePrice)
+   
+       // Calculate the total  price
+   const totalProPrice = calculateTotalProPrice(updatedCartItems);
+   console.log(totalProPrice)
+       setProPriceTotal(totalProPrice)
    // console.log('Updated cart ', updatedCartItems);
    // console.log("Item removed from cart:");
 } catch (error) {
