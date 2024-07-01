@@ -70,6 +70,7 @@ const EditBanner = () => {
             .then((res) => {
                if (res) {
                   toast.success(res?.message ?? "Banner added Successfully");
+                  navigate('/banners')
                }
             })
             .catch((err) => {
