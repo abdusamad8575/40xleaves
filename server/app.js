@@ -6,14 +6,14 @@ const path = require('path')
 const dotenv = require('dotenv');
 dotenv.config();   
 
-const app = express();
-//app.use(cors());
-// const corsOptions = {
-//   origin: process.env.CLIENT_PORT_LOCAL,
-//   credentials: true, // Indicates whether or not the response to the request can be exposed when the credentials flag is true
-// };
-// app.use(cors(corsOptions));    
-app.use(cors());    
+const app = express();      
+app.use(cors());
+const corsOptions = {
+  origin: [process.env.CLIENT_PORT_LOCAL,process.env.ADMIN_PORT_LOCAL],
+  credentials: true, // Indicates whether or not the response to the request can be exposed when the credentials flag is true
+};
+app.use(cors(corsOptions));    
+// app.use(cors());    
 app.use(express.json());   
 app.use(express.static(path.join(__dirname, "./middlewares/public")));
 morgan.token("custom-date", (req, res) => {   
