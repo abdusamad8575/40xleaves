@@ -73,11 +73,12 @@ const userSchema = mongoose.Schema({
 
 userSchema.methods.updateCart = async function (id,qty){
     const cart = this.cart
-    const product = await Product.findById(id)
+    const product = await Product.findById(id) 
     const index = cart.item.findIndex(objInItems => {
         return new String(objInItems.productId).trim() == new String(product._id).trim()
     })
     console.log(id);
+    console.log(qty)
     if(qty >cart.item[index].qty ){
         cart.item[index].qty +=1
         cart.totalPrice += product.price
@@ -86,7 +87,7 @@ userSchema.methods.updateCart = async function (id,qty){
         cart.totalPrice -= product.price  
     }else{ 
        
-    }console.log(cart.totalPrice);
+    }//console.log(cart.totalPrice);
      this.save()
      return cart.totalPrice
 }

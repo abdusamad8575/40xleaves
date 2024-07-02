@@ -1,5 +1,6 @@
 const Order = require('../models/Order')
 const User = require('../models/user');
+const Product = require('../models/product');
 
 const getOrders = async (req, res) => {
   try {
@@ -45,12 +46,23 @@ const createOrder = async (req, res) => {
   const {  payment_mode, amount, address, products } = req?.body
   try {
     const data = await Order.create({ userId:_id, payment_mode, amount, address, products })
+    console.log('prod qty findings ',products.item)
 
 // Remove cart items from the user after order creation
 const user = await User.findById(_id);
 user.cart.item = []; // Clear the cart items
 user.cart.totalPrice = 0; // Reset total price to zero
 await user.save(); // Save the user with cleared cart
+
+for (const item of products.item) {
+  const product = await Product.findById(item.product_id);
+
+  if (product) {
+    // Reduce the product stock by the ordered quantity
+    product.stock -= item.qty;
+    await product.save();
+  }
+}
 
     res.status(201).json({ data, message: 'Order placed successfully' });
   } catch (error) {

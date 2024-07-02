@@ -101,7 +101,7 @@ const removeFromWishlist = async (req, res) => {
 const getWishLists = async (req, res) => {
  // const userId = '66796d0936bb97720a7764f4'; // Assuming this is the user ID
    const { _id } = req?.decoded
-   console.log('  _uid',_id)
+  // console.log('  _uid',_id)
 
   try {
       const userWishlist = await User.getWishlistWithProductsByUserId(_id);
