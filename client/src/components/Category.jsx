@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../axios';
+
 import './Category.css';
 
 function Category() {
@@ -11,7 +12,7 @@ function Category() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/category`);
+        const response = await axiosInstance.get(`/api/v1/category`);
         setCategories(response.data.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -41,7 +42,7 @@ function Category() {
               >
                 <div className="category-content text-center shadow mt-3 rounded p-1">
                   <img
-                    src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${category.image}`}
+                    src={`http://localhost:5000/uploads/${category.image}`}
                     alt={category.name}
                     width={150}
                     height={150}

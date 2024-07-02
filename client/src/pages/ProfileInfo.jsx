@@ -29,9 +29,9 @@ function ProfileInfo() {
       <div>
       <div className='d-flex justify-content-between mt-3'>
             <label className='fw-bold '>Name</label>  
-            <button onClick={handleEditName} className='btn '>
+            {/* <button onClick={handleEditName} className='btn '>
               {nameEditable ? 'Save' : 'Edit'}
-            </button>
+            </button> */}
       </div>
         <input type="text" value={userDetails==null ? '' : userDetails.username} disabled={!nameEditable}onChange={(e) => setName(e.target.value)} className='form-control '/>
        
@@ -40,18 +40,18 @@ function ProfileInfo() {
 
       <div className='d-flex justify-content-between mt-3'>
             <label className='fw-bold'>Email</label>
-            <button onClick={handleEditEmail} className='btn'>
+            {/* <button onClick={handleEditEmail} className='btn'>
               {emailEditable ? 'Save' : 'Edit'}
-            </button>
+            </button> */}
       </div>
        <input type="text" value={ userDetails==null ? '' : userDetails.email} disabled={!emailEditable}onChange={(e) => setEmail(e.target.value)} className='form-control'/>
       </div>
       <div>
        <div className='d-flex justify-content-between mt-3'>
             <label className='fw-bold'>Phone</label>
-            <button onClick={handleEditPhone} className='btn'>
+            {/* <button onClick={handleEditPhone} className='btn'>
               {phoneEditable ? 'Save' : 'Edit'}
-            </button>
+            </button> */}
        </div>
         <input type="text" value={userDetails==null ? '' : userDetails.phone} disabled={!phoneEditable}onChange={(e) => setPhone(e.target.value)} className='form-control'/>
       </div>

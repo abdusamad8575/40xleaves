@@ -55,7 +55,7 @@ const calculateTotalSalePrice = (items) => {
   
     
     // Add the sale_rate to the totalSalePrice
-    totalSalePrice +=item.productId.sale_rate;
+    totalSalePrice +=item.productId.sale_rate * item.qty;
   });
 
   return totalSalePrice;
@@ -68,7 +68,7 @@ const calculateTotalProPrice = (items) => {
   
     
     // Add the sale_rate to the totalSalePrice
-    totalSalePrice +=item.productId.price;
+    totalSalePrice +=item.productId.price * item.qty;
   });
 
   return totalSalePrice;
@@ -87,61 +87,55 @@ const calculateTotalDiscountPrice = (items) => {
   return totalSalePrice;
 };
 
-let urlQuery = '';
+ 
+const fetchData = async()=>{
 
-useEffect(()=>{
+  try {
 
-  urlQuery=`/api/v1/user/getcarts`
-
-  const fetchData = async()=>{
-
-    try {
-
-      const response = await axiosInstance.get(urlQuery);
-      setCartData(response.data.data)
-      console.log('cart',response.data.data)
-      const items = response.data.data.item;
+    const response = await axiosInstance.get(`/api/v1/user/getcarts`);
+    setCartData(response.data.data)
+    console.log('cart',response.data.data)
+    const items = response.data.data.item;
 
 // Calculate the total sale price
 const totalSalePrice = calculateTotalSalePrice(items);
 //console.log(totalSalePrice)
-    setSalePriceTotal(totalSalePrice)
+  setSalePriceTotal(totalSalePrice)
 
-    // Calculate the total  price
+  // Calculate the total  price
 const totalProPrice = calculateTotalProPrice(items);
 //console.log(totalProPrice)
-    setProPriceTotal(totalProPrice)
+  setProPriceTotal(totalProPrice)
 
-    // Calculate the total discount
+  // Calculate the total discount
 const totalDiscount = calculateTotalDiscountPrice(items);
 //console.log(totalDiscount)
-    setDiscountTotal(totalDiscount)
-      
+  setDiscountTotal(totalDiscount)
+    
 
 
-    } catch (error) {
-      console.log(error)
-    }
-
+  } catch (error) {
+    console.log(error)
   }
 
+}
 
+
+useEffect(()=>{
+ 
   fetchData()
-
-
+ 
 },[])
 
 const handleRemoveItem =async (itemId) => {
   console.log('cart id ',itemId)
-   urlQuery=`/api/v1/user/removeFromCart/${itemId}`
+  let urlQuery=`/api/v1/user/removeFromCart/${itemId}`
 
 
   try {
    const response = await axiosInstance.patch(urlQuery);
    const updatedCartItems = cartData.item.filter((item) => item._id !== itemId);
    const updatedTotalPrice = updatedCartItems.reduce((acc, item) => acc + (item.price * item.qty), 0);
-
-console.log('upppp',updatedCartItems)
 
 setProPriceTotal(null)
 setSalePriceTotal(null)
@@ -160,6 +154,12 @@ console.log(totalSalePrice)
 const totalProPrice = calculateTotalProPrice(updatedCartItems);
 console.log(totalProPrice)
     setProPriceTotal(totalProPrice)
+
+    console.log('logic',cartData)
+    console.log('logic l',cartData.item.length)
+    if(cartData.item.length - 1==0){
+      navigate('/')
+    }
 
   // console.log('Updated cart ', updatedCartItems);
   // console.log("Item removed from cart:");
@@ -183,14 +183,35 @@ console.log(totalProPrice)
       quantity: 1,
     }
   ]);
-
-  const handleQuantityChange = (id, newQuantity) => {
-    setProducts(prevProducts =>
-      prevProducts.map(product =>
-        product.id === id ? { ...product, quantity: newQuantity } : product
-      )
-    );
-  };
+  const handleQuantityChange =async (item, operation) => {
+    let QtyApi = item.qty
+    if(operation==='increment'){
+      QtyApi +=1
+    }else if (operation==='decrement'){
+      QtyApi -=1
+    }
+    try {
+       
+    
+    if(item.qty <=  item.productId.stock && operation==='increment'){
+      const response = await axiosInstance.patch(`/api/v1/user/updateQty`,{ qty:QtyApi, productId:item.productId._id })
+      console.log('incrr')
+     
+    
+    
+    }else if(item.qty>1 && operation==='decrement'){
+      const response = await axiosInstance.patch(`/api/v1/user/updateQty`,{ qty:QtyApi, productId:item.productId._id })
+    
+      console.log('decrrr')
+    
+    }
+    
+      } catch (error) {
+       console.log(error)
+      }
+    
+      fetchData()
+     }
 
   const calculateSubtotal = () => {
     return products.reduce((total, product) => total + product.price * product.quantity, 0);
@@ -405,7 +426,7 @@ if(paymentOption === 'cod'){
                           <button
                             className="btn btn-outline-secondary"
                             type="button"
-                            onClick={() => handleQuantityChange(product.id, product.quantity - 1)}
+                            onClick={() => handleQuantityChange(product, 'decrement')}
                             disabled={product.quantity === 1}
                           >
                             -
@@ -419,7 +440,7 @@ if(paymentOption === 'cod'){
                           <button
                             className="btn btn-outline-secondary"
                             type="button"
-                            onClick={() => handleQuantityChange(product.id, product.quantity + 1)}
+                            onClick={() => handleQuantityChange(product, 'increment')}
                           >
                             +
                           </button>

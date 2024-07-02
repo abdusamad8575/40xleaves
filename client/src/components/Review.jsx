@@ -7,7 +7,8 @@ import { Button, Card, Col, Form, Modal, ProgressBar, Row } from 'react-bootstra
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Review.css';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import axiosInstance from '../axios'
+
 
 function Review({ productId }) {
   const userDetails = useSelector((state) => state.userDetails);
@@ -24,7 +25,7 @@ function Review({ productId }) {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/reviews/${productId}`);
+        const response = await axiosInstance.get(`/api/v1/reviews/${productId}`);
         setReviews(response.data.data);
       } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -33,7 +34,7 @@ function Review({ productId }) {
 
     const checkCanWriteReview = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/orders/user/${userDetails._id}/product/${productId}`);
+        const response = await axiosInstance.get(`/api/v1/orders/user/${userDetails._id}/product/${productId}`);
         setCanWriteReview(response.data.canWriteReview);
       } catch (error) {
         console.error('Error checking if user can write review:', error);
@@ -55,7 +56,7 @@ function Review({ productId }) {
 
   const handleSubmitReview = async () => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/reviews`, {
+      const response = await axiosInstance.post(`/api/v1/reviews`, {
         productId,
         userId:userDetails._id,
         ...newReview,
@@ -84,7 +85,7 @@ function Review({ productId }) {
   });
 
   const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-  const averageRating = (totalRating / totalReviews).toFixed(1);
+  const averageRating = (totalRating / totalReviews).toFixed(1) ;
 
   const displayedReviews = showAllReviews ? reviews : reviews.slice(0, 4);
 
@@ -99,7 +100,9 @@ function Review({ productId }) {
               <Row>
                 <Col lg={4} className="text-center">
                   <div className="rating-summary">
-                    <h1>{averageRating}</h1>
+                    {/* <h1>{averageRating}</h1> */}
+                    <h1>{totalReviews > 0 ? averageRating : '0'}</h1>
+
                     <div>
                       {[...Array(5)].map((_, index) => (
                         <i
@@ -125,7 +128,11 @@ function Review({ productId }) {
                             className="progress-bar-custom"
                           />
                         </div>
-                        <span>{((ratingCounts[rating - 1] / totalReviews) * 100).toFixed(0)}%</span>
+                        {/* <span>{((ratingCounts[rating - 1] / totalReviews) * 100).toFixed(0)}%</span> */}
+                        <span>
+  {totalReviews > 0 ? `${((ratingCounts[rating - 1] / totalReviews) * 100).toFixed(0)}%` : '0%'}
+</span>
+
                       </div>
                     ))}
                   </div>

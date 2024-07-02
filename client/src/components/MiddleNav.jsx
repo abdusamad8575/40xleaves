@@ -2,8 +2,8 @@ import React, { useState,useEffect } from 'react'
 import axiosInstance from '../axios'
 import logo from '../assets/images/logo.png';
 import { Link } from 'react-router-dom';
-import { useDispatch,useSelector } from 'react-redux';
-import { clearUserDetails } from '../redux/actions/userActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserDetails, clearUserDetails } from '../redux/actions/userActions';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -14,6 +14,20 @@ function MiddleNav({notification}) {
 
   const [wishListData,setWishListData] = useState()
   const [cartData,setCartData] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get('/api/v1/auth/user');
+       // console.log(response.data.data)
+        dispatch(setUserDetails(response.data.data));
+      } catch (error) {
+        console.log('errr', error);
+        dispatch(clearUserDetails());
+      }
+    };
+    fetchData();
+  }, []);
 
 let urlQuery = '';
 
@@ -27,7 +41,7 @@ useEffect(()=>{
 
       const response = await axiosInstance.get(urlQuery);
       setCartData(response.data.data.item.length)
-      console.log(response.data.data.item.length)
+     // console.log(response.data.data.item.length)
 
     }catch(error){
       
@@ -47,7 +61,7 @@ useEffect(()=>{
  
          const response = await axiosInstance.get(`/api/v1/user/getwishlist`);
          setWishListData(response.data.data.length)
-         console.log(response.data.data.length)
+      //   console.log(response.data.data.length)
          
        } catch (error) {
          console.log(error)

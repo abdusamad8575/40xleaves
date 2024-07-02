@@ -28,7 +28,7 @@ function SingleOrder() {
       setAddress(response.data.data.address)
       setProductsData(response.data.data.products.item)
       console.log('order by id :',response.data.data)
-      console.log('address :',response.data.data.address)
+      //console.log('address :',response.data.data.address)
     } catch (error) {
       
     }
@@ -67,21 +67,24 @@ function SingleOrder() {
   };
 
   // Update progress and status based on data from backend
+
+   //ordersData  ["Pending", "Placed", "Shipped", "Out_of_delivery", "Delivered", "Delayed", "Canceled"],
   useEffect(() => {
-    const backendStatus = dataFromBackend.status.toLowerCase().replace(/ /g, '_');
+    const backendStatus = ordersData.status
+    //.toLowerCase().replace(/ /g, '_');
     setStatus(backendStatus);
 
     switch (backendStatus) {
-      case 'order_confirmed':
+      case 'Placed':
         setProgress(0);
         break;
-      case 'shipped':
+      case 'Shipped':
         setProgress(33);
         break;
-      case 'out_for_delivery':
+      case 'Out_of_delivery':
         setProgress(66);
         break;
-      case 'delivered':
+      case 'Delivered':
         setProgress(100);
         break;
       default:

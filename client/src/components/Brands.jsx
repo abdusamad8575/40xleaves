@@ -5,6 +5,33 @@ import { Col, Container, Row } from 'react-bootstrap';
 
 function Brands() {
   const [brands,setbrands] = useState([])
+  const [banner,setBanner] = useState({})
+
+ 
+
+  useEffect(()=>{
+
+    
+
+    const fetchData = async()=>{
+
+      try {
+
+        const response = await axiosInstance.get(`/api/v1/banners`);
+        setBanner(response.data.data[0])
+       // console.log(response.data.data[0])
+        
+      } catch (error) {
+        console.log(error)
+      }
+
+    }
+
+
+    fetchData()
+
+
+  },[])
 
 const fetchData = async()=>{
 
@@ -50,7 +77,7 @@ useEffect(()=>{
     <div className="container-fluid">
       <div className="row">
         <div className="col-12">
-          <img className="d-block img-fluid" src={image} alt="banner" />
+          <img className="d-block img-fluid" src={`http://localhost:5000/uploads/${banner.image}`} alt="banner" />
         </div>
         <div className='col-12'>
         <div className="container mt-4">
