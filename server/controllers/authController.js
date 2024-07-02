@@ -3,13 +3,17 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 module.exports.signup = async (req, res) => {
-   console.log(req.body)
+  //  console.log(req.body)
    const {
       username, 
       password,
       email,
-      phone,
+      phone,  
    } = req.body;
+   console.log("sam-",username, 
+    password,
+    email,
+    phone)
 
    try {
       const encryptedPassword = await bcrypt.hash(password, 10);
@@ -141,7 +145,6 @@ module.exports.signup = async (req, res) => {
 module.exports.signin = async (req, res) => {
    const { password, email } = req.body;
    console.log('req body',req.body)
- console.log('mail is',req.body.mail)
    try {
      // Find the user by email
      const existingUser = await User.findOne({ email });

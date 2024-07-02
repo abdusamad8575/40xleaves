@@ -4,18 +4,18 @@ const router = require('./routes/index.js');
 const morgan = require('morgan');
 const path = require('path')
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config();   
 
-const app = express();
-//app.use(cors());
+const app = express();  
 const corsOptions = {
-  origin: `http://localhost:${process.env.CLIENT_PORT_LOCAL}`, // This is the origin of the request (your React frontend URL)
+  origin: [process.env.CLIENT_PORT_LOCAL,process.env.ADMIN_PORT_LOCAL],
   credentials: true, // Indicates whether or not the response to the request can be exposed when the credentials flag is true
 };
-app.use(cors(corsOptions));
-app.use(express.json());
+app.use(cors(corsOptions));    
+// app.use(cors());    
+app.use(express.json());   
 app.use(express.static(path.join(__dirname, "./middlewares/public")));
-morgan.token("custom-date", (req, res) => {
+morgan.token("custom-date", (req, res) => {   
   return new Date().toUTCString();
 });
 app.use(

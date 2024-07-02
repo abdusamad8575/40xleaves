@@ -8,7 +8,7 @@ const orderSchema = new mongoose.Schema({
     },
     payment_mode: {
         type: String,
-        required: true
+        required: true  
     },
     amount: {
         type: Number,
