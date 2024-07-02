@@ -205,7 +205,7 @@ const Allproducts = () => {
               {products.map((item) => (
                 <div key={item._id} className="col-xs-12 col-sm-6 col-md-4 mb-4">
                   <div className="card">
-                    <Link to={`/product/${item._id}`}>
+                    <Link to={`/product/${item._id}/${item.category}`}>
                       <img
                         src={`${ServerURL}/uploads/${item.image[0]}`}
                         className="card-img-top"

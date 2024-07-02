@@ -12,6 +12,7 @@ const [cartData,setCartData] = useState([])
 const [salePriceTotal,setSalePriceTotal] = useState(0)
 const [proPriceTotal,setProPriceTotal] = useState(0)
 const [discountTotal,setDiscountTotal] = useState(0)
+const [notif,setNotif] = useState(true)
 
 
 const calculateTotalSalePrice = (items) => {
@@ -22,7 +23,7 @@ const calculateTotalSalePrice = (items) => {
   
     
     // Add the sale_rate to the totalSalePrice
-    totalSalePrice +=item.productId.sale_rate;
+    totalSalePrice +=item.productId.sale_rate * item.qty ;
   });
 
   return totalSalePrice;
@@ -54,112 +55,84 @@ const calculateTotalDiscountPrice = (items) => {
   return totalSalePrice;
 };
 
-let urlQuery = '';
+const fetchData = async()=>{
 
-useEffect(()=>{
+  try {
 
-  urlQuery=`/api/v1/user/getcarts`
-
-  const fetchData = async()=>{
-
-    try {
-
-      const response = await axiosInstance.get(urlQuery);
-      setCartData(response.data.data)
-      console.log(response.data.data)
-      const items = response.data.data.item;
+    const response = await axiosInstance.get(`/api/v1/user/getcarts`);
+    setCartData(response.data.data)
+    console.log('cart details array',response.data.data)
+    //console.log('fetch qty ',response.data.data.item[0].qty)
+    const items = response.data.data.item;
 
 // Calculate the total sale price
 const totalSalePrice = calculateTotalSalePrice(items);
-console.log(totalSalePrice)
-    setSalePriceTotal(totalSalePrice)
+   setSalePriceTotal(totalSalePrice)
 
-    // Calculate the total  price
+  // Calculate the total  price
 const totalProPrice = calculateTotalProPrice(items);
-console.log(totalProPrice)
-    setProPriceTotal(totalProPrice)
+   setProPriceTotal(totalProPrice)
 
-    // Calculate the total discount
+  // Calculate the total discount
 const totalDiscount = calculateTotalDiscountPrice(items);
-console.log(totalDiscount)
-    setDiscountTotal(totalDiscount)
-      
+   setDiscountTotal(totalDiscount)
 
-
-    } catch (error) {
-      console.log(error)
-    }
-
+  } catch (error) {
+    console.log(error)
   }
 
+}
+
+useEffect(()=>{
 
   fetchData()
-
 
 },[])
 
 
-  const initialCartItems = [
-    {
-      id: 1,
-      name: 'Radish Pink Microgreen Seeds',
-      price: 150,
-      quantity: 2,
-      image: 'https://t3.ftcdn.net/jpg/06/25/41/12/240_F_625411283_dlpdiRmZxoptmfMX1NNh6jmIv4t3pwK3.jpg',
-    },
-    {
-      id: 2,
-      name: 'Broccoli Microgreen Seeds',
-      price: 300,
-      quantity: 1,
-      image: 'https://t3.ftcdn.net/jpg/06/66/74/62/240_F_666746258_1AXo03QTBbKAZi6WFDnb3msBkTLIObqk.jpg',
-    },
-    {
-      id: 3,
-      name: 'Radish White Microgreen seeds',
-      price: 200,
-      quantity: 3,
-      image: 'https://t3.ftcdn.net/jpg/06/99/07/80/240_F_699078038_KP59bO8zGU2U19722SParQzr87yyoVDQ.jpg',
-    },
-  ];
-
-  const [cartItems, setCartItems] = useState(initialCartItems);
-
-  const handleQtyChange = async (qty,proId) =>{
-
-    urlQuery=`/api/v1/user/updateQty`
-     try {
-      const response = await axiosInstance.patch(urlQuery,{qty,productId:proId});
-
-     } catch (error) {
-      console.log(error)
-     }
-
-  }
-
-  const handleQuantityChange =async (itemId, operation) => {
 
  
 
+  const handleQuantityChange =async (item, operation,index) => {
+let QtyApi = item.qty
+if(operation==='increment'){
+  QtyApi +=1
+}else if (operation==='decrement'){
+  QtyApi -=1
+}
+try {
+   
 
-    setCartItems(prevCartItems =>
-      prevCartItems.map(item =>
-        item.id === itemId
-          ? {
-              ...item,
-              quantity:
-                operation === 'increment'
-                  ? item.quantity + 1
-                  : Math.max(item.quantity - 1, 1),
-            }
-          : item
-      )
-    );
-  };
+if(item.qty <=  item.productId.stock && operation==='increment'){
+  const response = await axiosInstance.patch(`/api/v1/user/updateQty`,{ qty:QtyApi, productId:item.productId._id })
+ 
+  setProPriceTotal(null)
+  setSalePriceTotal(null)
+
+
+}else if(item.qty>1 && operation==='decrement'){
+  const response = await axiosInstance.patch(`/api/v1/user/updateQty`,{ qty:QtyApi, productId:item.productId._id })
+
+  setProPriceTotal(null)
+    setSalePriceTotal(null)
+
+}
+
+  } catch (error) {
+   console.log(error)
+  }
+
+  fetchData()
+ }
+
+
+
+
+  
 
   const handleRemoveItem =async (itemId) => {
    console.log('cart id ',itemId)
-    urlQuery=`/api/v1/user/removeFromCart/${itemId}`
+   let urlQuery=`/api/v1/user/removeFromCart/${itemId}`
 
 
    try {
@@ -182,8 +155,9 @@ console.log(totalDiscount)
    const totalProPrice = calculateTotalProPrice(updatedCartItems);
    console.log(totalProPrice)
        setProPriceTotal(totalProPrice)
-   // console.log('Updated cart ', updatedCartItems);
-   // console.log("Item removed from cart:");
+
+       setNotif(prev => !prev);
+
 } catch (error) {
     console.error("Error removing item from wishlist:", error);
  
@@ -191,21 +165,17 @@ console.log(totalDiscount)
  
   };
 
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+   
 
   const discount = 300; // Example discount
   const deliveryCharges = 300; // Example delivery charges
 
-  const totalBeforeDiscount = subtotal;
-  const totalAfterDiscount = totalBeforeDiscount - discount - deliveryCharges;
+  
 
   return (
     <>
       <TopNav />
-      <MiddleNav />
+      <MiddleNav notification={notif} />
       <MainNav />
       <div className="container my-5">
         <h1 className="text-success mb-4 text-center ">
@@ -223,7 +193,7 @@ console.log(totalDiscount)
         ) : (
           <div className="row">
             <div className="col-md-8">
-              {cartData?.item?.map(item => (
+              {cartData?.item?.map((item,index) => (
                 <div key={item._id} className="card mb-3 border-success p-3 shadow">
                   <div className="row g-0">
                     <div className="col-md-4 col-5 d-flex align-items-center ">
@@ -245,7 +215,7 @@ console.log(totalDiscount)
                           <div className="d-flex justify-content-center align-items-center ">
                             <button
                               className="btn btn-outline-success rounded-circle"
-                              onClick={() => handleQuantityChange(item._id, 'decrement')}
+                              onClick={() => handleQuantityChange(item, 'decrement',index)}
                               disabled={item.quantity === 1}
                             >
                               <i className="fas fa-minus"></i>
@@ -253,7 +223,7 @@ console.log(totalDiscount)
                             <span className="mx-3 fw-bold">{item.qty}</span>
                             <button
                               className="btn btn-outline-success rounded-circle"
-                              onClick={() => handleQuantityChange(item._id, 'increment')}
+                              onClick={() => handleQuantityChange(item, 'increment',index )}
                             >
                               <i className="fas fa-plus"></i>
                             </button>

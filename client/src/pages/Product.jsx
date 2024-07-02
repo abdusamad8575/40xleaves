@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams  } from 'react-router-dom';
 import axiosInstance from '../axios'
 import { useSelector } from 'react-redux';
 import { Accordion, Button, Carousel, Col, Container, Image, ListGroup, Row } from 'react-bootstrap';
@@ -16,18 +16,182 @@ function Product() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [productData, setProductData] = useState([])
   const navigate = useNavigate();
-  const { proId } = useParams();
-  const [cartItems, setCartItems] = useState([]);
+  const { proId,catId } = useParams();
+ 
+
+  const [cartItemsData, setCartItemsData] = useState([]);
   const userDetails = useSelector(state => state.userDetails);
   const [notif, setNotif] = useState(true)
 
-  const fetchData = async () => {
+
+
+
+  //for similar products
+const [products,setProducts] = useState([]);
+const [wishlistItems, setWishlistItems] = useState([]);
+const [cartItems, setCartItems] = useState([]);
+
+let urlQuery = '';
+
+useEffect(()=>{
+
+  urlQuery=`/api/v1/products/productshome?page=1&limit=8&sortField=createdAt&sortOrder=desc&category=${catId}`
+
+  const fetchData = async()=>{
+
+    try {
+
+      const response = await axiosInstance.get(urlQuery);
+      setProducts(response.data.data)
+     const wishlistResponse = await axiosInstance.get('/api/v1/user/getwishlist');
+    setWishlistItems(wishlistResponse.data.data);
+    const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');
+    setCartItems(cartResponse.data.data.item);
+    //console.log(cartResponse.data.data.item)
+      
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+
+
+
+  fetchData()
+
+
+},[])
+
+const fetchCart = async () => {
+  console.log('reached fetch cart 2')
+  try {
+    const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');
+    setCartItems(cartResponse.data.data.item);
+  //  console.log('reached fetch cart 3',cartResponse.data.data.item)
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const fetchWishlist = async () => {
+  try {
+    const wishlistResponse = await axiosInstance.get('/api/v1/user/getwishlist');
+    setWishlistItems(wishlistResponse.data.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+const addWishlist = async (proId) => {
+
+  if(!userDetails){
+    navigate('/login')
+    
+        }else{
+
+
+          try {
+            urlQuery = `/api/v1/user/addToWishlist/${proId}`
+            const response = await axiosInstance.patch(urlQuery);
+            await fetchWishlist();
+            //console.log(response)
+            setNotif(prev => !prev);
+          } catch (error) {
+            console.log(error)
+          
+          }
+        }
+
+
+
+}
+
+const removeWishlist = async (proId) => {
+  if(!userDetails){
+    navigate('/login')
+    
+        }else{
+          try {
+            urlQuery = `/api/v1/user/removeFromWishlist/${proId}`
+            const response = await axiosInstance.patch(urlQuery);
+            await fetchWishlist();
+            setNotif(prev => !prev);
+      //console.log(response)
+          } catch (error) {
+            console.log(error)
+          }
+        }
+  
+
+}
+
+const addCart = async (proId) => {
+  if(!userDetails){
+    navigate('/login')
+    
+        }else{
+          try {
+            urlQuery = `/api/v1/user/addToCart/${proId}`
+            const response = await axiosInstance.patch(urlQuery);
+          await  fetchCart()
+          setNotif(prev => !prev);
+            //console.log(response)
+          } catch (error) {
+            console.log(error)
+          
+          }
+        }
+
+  
+    }
+    
+    const removeCart = async (proId) => {
+      if(!userDetails){
+        navigate('/login')
+        
+            }else{
+              console.log('reached rem cart',proId)
+      
+              try {
+                const ItemId = cartItems.filter((item)=>item.productId._id == proId )
+                console.log(' item id',ItemId)
+                
+      
+                urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
+                const response = await axiosInstance.patch(urlQuery);
+              await  fetchCart()
+              setNotif(prev => !prev);
+          //console.log(response)
+              } catch (error) {
+                console.log(error)
+              }
+
+            }
+    
+  
+    }
+
+    const isInWishlist = (productId) => {
+      return wishlistItems.some((item) => item._id === productId);
+    };
+
+    const isInCart = (productId) => {
+      return cartItems.some((item) => item.productId._id === productId);
+    };
+
+
+ 
+
+//  for specific product 
+  const fetchProductData = async () => {
 
     try {
       const urlQuery = `/api/v1/products/${proId}`
       const response = await axiosInstance.get(urlQuery);
       setProductData(response.data.data)
-      console.log(response.data.data)
+      //console.log(response.data.data)
     } catch (error) {
       console.log(error)
     }
@@ -36,23 +200,23 @@ function Product() {
 
   useEffect(() => {
 
-    fetchData()
-    fetchCart()
+    fetchProductData()
+    fetchCartData()
 
-  }, [])
+  }, [proId])
 
-  const fetchCart = async () => {
+  const fetchCartData = async () => {
     console.log('reached fetch cart 2')
     try {
       const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');
-      setCartItems(cartResponse.data.data.item);
+      setCartItemsData(cartResponse.data.data.item);
       //  console.log('reached fetch cart 3',cartResponse.data.data.item)
     } catch (error) {
       console.log(error);
     }
   };
 
-  const addCart = async (proId1) => {
+  const addCartData = async (proId1) => {
     if (!userDetails) {
       navigate('/login')
 
@@ -60,7 +224,7 @@ function Product() {
       try {
         const urlQuery = `/api/v1/user/addToCart/${proId1}`
         const response = await axiosInstance.patch(urlQuery);
-        await fetchCart()
+        await fetchCartData()
         setNotif(prev => !prev);
         //console.log(response)
       } catch (error) {
@@ -72,7 +236,7 @@ function Product() {
 
   }
 
-  const removeCart = async (proId1) => {
+  const removeCartData = async (proId1) => {
     if (!userDetails) {
       navigate('/login')
 
@@ -80,13 +244,13 @@ function Product() {
       console.log('reached rem cart', proId1)
 
       try {
-        const ItemId = cartItems.filter((item) => item.productId._id == proId1)
+        const ItemId = cartItemsData.filter((item) => item.productId._id == proId1)
         console.log(' item id', ItemId)
 
 
         const urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
         const response = await axiosInstance.patch(urlQuery);
-        await fetchCart()
+        await fetchCartData()
         setNotif(prev => !prev);
         //console.log(response)
       } catch (error) {
@@ -98,8 +262,8 @@ function Product() {
 
   }
 
-  const isInCart = (productId) => {
-    return cartItems.some((item) => item.productId._id === productId);
+  const isInCartData = (productId) => {
+    return cartItemsData.some((item) => item.productId._id === productId);
   };
 
   const product = {
@@ -178,6 +342,26 @@ function Product() {
     setSelectedImage(index);
   };
 
+  const buyNow = async(proId1)=>{
+    console.log(proId1)
+    if (!userDetails) {
+      navigate('/login')
+
+    } else {
+      try {
+        
+        const urlQuery = `/api/v1/user/addToCart/${proId1}`
+        const response = await axiosInstance.patch(urlQuery);
+        await fetchCartData()
+        setNotif(prev => !prev);
+        navigate('/checkout')
+        //console.log(response)
+      } catch (error) {
+        console.log(error)
+
+      }
+    }
+  }
 
 
   return (
@@ -246,16 +430,14 @@ function Product() {
                   </ListGroup>
                 </div>
                 <div className="product-actions">
-                  <Link to={'/checkout'}>
-                    <Button variant="success" className="me-2">
+                 
+                    <Button variant="success" className="me-2" onClick={() => buyNow(productData._id)} >
                       Buy Now
                     </Button>
-                  </Link>
-
-
+    
                   {
-                    !isInCart(proId) ? <Button variant="outline-success" onClick={() => addCart(proId)}  >Add to Cart</Button> :
-                      <Button variant="outline-danger" onClick={() => removeCart(proId)}>Remove from Cart</Button>
+                    !isInCartData(proId) ? <Button variant="outline-success" onClick={() => addCartData(proId)}  >Add to Cart</Button> :
+                      <Button variant="outline-danger" onClick={() => removeCartData(proId)}>Remove from Cart</Button>
                   }
                 </div>
               </div>
@@ -290,19 +472,46 @@ function Product() {
             <Col>
               <h3 className="mb-4">Similar Products</h3>
               <Slider {...settings}>
-                {similarProducts.map(item => (
-                  <div key={item.id} className="d-flex justify-content-center p-3">
+                {products.map(item => (
+                  <div key={item._id} className="d-flex justify-content-center p-3">
                     <div className="shadow p-3 bg-white rounded" style={{ width: "80%" }}>
-                      <Link to={'/product'}><Image src={item.image} alt={item.name} fluid className="mx-auto mb-2" style={{ mixBlendMode: 'multiply' }} /></Link>
-                      <Link to={'/product'} className='text-muted fw-bold '><h6>{item.name}</h6></Link>
-                      <p className="fw-bold m-1">₹{item.price}</p>
-                      <span className='m-1 text-muted text-decoration-line-through'>₹999</span>
-                      <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
+                      <Link  to={`/product/${item._id}/${item.category}`}   >
+                      <Image src={`http://localhost:5000/uploads/${item.image[0]}`} alt={item.name} fluid className="mx-auto mb-2"
+                       style={{ mixBlendMode: 'multiply' }}
+                       onClick={()=>{navigate()}} />
+                      </Link>
+                      <Link to={`/product/${item._id}/${item.category}`} className='text-muted fw-bold '><h6>{item.name}</h6></Link>
+                      <p className="fw-bold m-1">₹{item.sale_rate}</p>
+                      <span className='m-1 text-muted text-decoration-line-through'>₹{item.price}</span>
+                      <span className='text-success fw-bold bg-success-subtle p-1'>{item.discount}% off</span>
                       <div className="d-flex justify-content-between mt-3 ">
-                        <button className="btn btn-success rounded-3">
-                          <i className="fa-solid fa-heart"></i>
-                        </button>
-                        <button className="btn btn-outline-success rounded-3"><i className="fas fa-shopping-cart"></i></button>
+                       
+                      {
+! isInWishlist(item._id) ? (   
+
+  <button className='btn btn-success rounded-3' onClick={   ()=> addWishlist(item._id)} >
+    <i className="fa-solid fa-heart"></i>
+ </button>
+
+):
+(    
+  <button className='btn btn-danger rounded-3' onClick={()=> removeWishlist(item._id)}>
+    <i className="fa-solid fa-heart"></i>
+ </button>
+ )
+
+}
+{
+  ! isInCart(item._id) ? (                      <button className='btn btn-success rounded-3' 
+    onClick={()=> addCart(item._id)}><i className="fas fa-shopping-cart"></i></button>
+  ) :
+  (
+      <button className='btn btn-danger rounded-3' onClick={()=> removeCart(item._id)}
+      ><i className="fas fa-shopping-cart"></i></button> 
+
+  )
+}
+                     
                       </div>
                     </div>
                   </div>

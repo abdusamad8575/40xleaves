@@ -213,8 +213,8 @@ const userDetails = useSelector(state => state.userDetails);
                 {products.map(item => (
                   <div key={item._id} className='d-flex justify-content-center p-2'>
                     <div className='shadow p-3 bg-white rounded' style={{padding:'10px',width:"80%"}}>
-                      <Link to={`/product/${item._id}`}><img src={`http://localhost:5000/uploads/${item.image[0]}`} alt={item.name} className="img-fluid mx-auto mb-2" style={{mixBlendMode:'multiply'}}/></Link>
-                     <Link to={`/product/${item._id}`}> <h5 className='text-muted'>{item.name}</h5></Link>
+                      <Link to={`/product/${item._id}/${item.category}`}><img src={`http://localhost:5000/uploads/${item.image[0]}`} alt={item.name} className="img-fluid mx-auto mb-2" style={{mixBlendMode:'multiply'}}/></Link>
+                     <Link to={`/product/${item._id}/${item.category}`}> <h5 className='text-muted'>{item.name}</h5></Link>
                       <p className='fw-bold m-1'>₹{item.sale_rate}</p>
                      <div> 
                       <span className='m-1 text-muted text-decoration-line-through '>₹{item.price}</span>
@@ -222,19 +222,7 @@ const userDetails = useSelector(state => state.userDetails);
                       </div>
                       <p className='fw-bold'>500 gm</p>
                     <div className='d-flex justify-content-between'>  
-{/* {
-true ? (   <Link to={'/wishlist'}>
-  <button className='btn btn-success rounded-3' onClick={()=> addWishlist(item._id)} >
-    <i className="fa-solid fa-heart"></i>
- </button>
-</Link>):
-(   <Link to={'/wishlist'}>
-  <button className='btn btn-danger rounded-3' onClick={()=> removeWishlist(item._id)}>
-    <i className="fa-solid fa-heart"></i>
- </button>
-</Link>)
 
-} */}
 {
 ! isInWishlist(item._id) ? (   
 
