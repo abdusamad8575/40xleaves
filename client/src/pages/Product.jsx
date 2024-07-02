@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
-import { useNavigate,useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../axios'
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Accordion, Button, Carousel, Col, Container, Image, ListGroup, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
@@ -14,92 +14,91 @@ import Footer from '../components/Footer';
 
 function Product() {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [productData,setProductData] = useState([])
+  const [productData, setProductData] = useState([])
   const navigate = useNavigate();
   const { proId } = useParams();
   const [cartItems, setCartItems] = useState([]);
   const userDetails = useSelector(state => state.userDetails);
-  const [notif,setNotif] = useState(true)
+  const [notif, setNotif] = useState(true)
 
+  const fetchData = async () => {
 
-  const fetchData = async()=>{
-  
-try {
-  const urlQuery = `/api/v1/products/${proId}`
-  const response = await axiosInstance.get(urlQuery);
-  setProductData(response.data.data)
-console.log(response.data.data)
-} catch (error) {
-  console.log(error)
-}
+    try {
+      const urlQuery = `/api/v1/products/${proId}`
+      const response = await axiosInstance.get(urlQuery);
+      setProductData(response.data.data)
+      console.log(response.data.data)
+    } catch (error) {
+      console.log(error)
+    }
 
   }
 
-  useEffect(()=>{
+  useEffect(() => {
 
-fetchData()
-fetchCart()
+    fetchData()
+    fetchCart()
 
-  },[])
+  }, [])
 
   const fetchCart = async () => {
     console.log('reached fetch cart 2')
     try {
       const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');
       setCartItems(cartResponse.data.data.item);
-    //  console.log('reached fetch cart 3',cartResponse.data.data.item)
+      //  console.log('reached fetch cart 3',cartResponse.data.data.item)
     } catch (error) {
       console.log(error);
     }
   };
 
   const addCart = async (proId1) => {
-    if(!userDetails){
+    if (!userDetails) {
       navigate('/login')
-      
-          }else{
-            try {
-           const   urlQuery = `/api/v1/user/addToCart/${proId1}`
-              const response = await axiosInstance.patch(urlQuery);
-            await  fetchCart()
-            setNotif(prev => !prev);
-              //console.log(response)
-            } catch (error) {
-              console.log(error)
-            
-            }
-          }
-  
-    
-      }
-      
-      const removeCart = async (proId1) => {
-        if(!userDetails){
-          navigate('/login')
-          
-              }else{
-                console.log('reached rem cart',proId1)
-        
-                try {
-                  const ItemId = cartItems.filter((item)=>item.productId._id == proId1 )
-                  console.log(' item id',ItemId)
-                  
-        
-              const    urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
-                  const response = await axiosInstance.patch(urlQuery);
-                await  fetchCart()
-                setNotif(prev => !prev);
-            //console.log(response)
-                } catch (error) {
-                  console.log(error)
-                }
 
-              }
-      
-    
+    } else {
+      try {
+        const urlQuery = `/api/v1/user/addToCart/${proId1}`
+        const response = await axiosInstance.patch(urlQuery);
+        await fetchCart()
+        setNotif(prev => !prev);
+        //console.log(response)
+      } catch (error) {
+        console.log(error)
+
+      }
+    }
+
+
+  }
+
+  const removeCart = async (proId1) => {
+    if (!userDetails) {
+      navigate('/login')
+
+    } else {
+      console.log('reached rem cart', proId1)
+
+      try {
+        const ItemId = cartItems.filter((item) => item.productId._id == proId1)
+        console.log(' item id', ItemId)
+
+
+        const urlQuery = `/api/v1/user/removeFromCart/${ItemId[0]._id}`
+        const response = await axiosInstance.patch(urlQuery);
+        await fetchCart()
+        setNotif(prev => !prev);
+        //console.log(response)
+      } catch (error) {
+        console.log(error)
       }
 
-const isInCart = (productId) => {
+    }
+
+
+  }
+
+  const isInCart = (productId) => {
     return cartItems.some((item) => item.productId._id === productId);
   };
 
@@ -119,8 +118,8 @@ const isInCart = (productId) => {
       "Prevents Cancer"
     ],
     about: [
-       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique molestias consequuntur commodi cupiditate inventore ipsum sit deleniti. Quod nulla rerum dolor quidem accusamus ea repellat, ratione enim tenetur sint perferendis?"
-     ]
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique molestias consequuntur commodi cupiditate inventore ipsum sit deleniti. Quod nulla rerum dolor quidem accusamus ea repellat, ratione enim tenetur sint perferendis?"
+    ]
   };
 
   const similarProducts = [
@@ -179,13 +178,13 @@ const isInCart = (productId) => {
     setSelectedImage(index);
   };
 
- 
+
 
   return (
-   <>
-     <TopNav/>
-     <MiddleNav notification={notif} />
-     <MainNav/> 
+    <>
+      <TopNav />
+      <MiddleNav notification={notif} />
+      <MainNav />
       <div>
         <Container className="product-details-container my-5">
           <Row>
@@ -206,7 +205,7 @@ const isInCart = (productId) => {
                   {productData.image && productData?.image?.map((image1, index) => (
                     <div key={index} className='border mb-1'>
                       <Image
-                       src={`http://localhost:5000/uploads/${image1}`}
+                        src={`http://localhost:5000/uploads/${image1}`}
                         alt={`Thumbnail ${index}`}
                         fluid
                         className={`thumbnail-image ${index === selectedImage ? 'selected' : ''}`}
@@ -217,13 +216,13 @@ const isInCart = (productId) => {
                 </Col>
                 <Col xs={9} md={9} lg={9} className='border'>
                   <div className="main-image mt-3 ">
-                  {productData.image && (
-          <Image
-            src={`http://localhost:5000/uploads/${productData.image[selectedImage]}`}
-            fluid
-            style={{ width: '100%' }}
-          />
-        )}                  </div>
+                    {productData.image && (
+                      <Image
+                        src={`http://localhost:5000/uploads/${productData.image[selectedImage]}`}
+                        fluid
+                        style={{ width: '100%' }}
+                      />
+                    )}                  </div>
                 </Col>
               </Row>
             </Col>
@@ -232,12 +231,12 @@ const isInCart = (productId) => {
                 <h1 className="product-name fw-bold ">{productData.name}</h1>
                 <p className='text-muted fw-lighter m-0'>MRP: <span className='text-decoration-line-through'>₹{productData.price}</span> </p>
                 <h3 className="font-weight-bold">Price: ₹{productData.sale_rate}</h3>
-  
+
                 {productData.price && productData.sale_rate && (
                   <p className="m-0 text-success">You save: {((productData.price - productData.sale_rate) / productData.price * 100).toFixed(2)}%</p>
                 )}
                 <p className='text-muted'>(inclusive of all taxes)</p>
-  
+
                 <div className="product-details mb-3">
                   <h4 className='bg-success-subtle p-1 d-inline-block '>Benefits</h4>
                   <ListGroup variant="flush">
@@ -247,78 +246,78 @@ const isInCart = (productId) => {
                   </ListGroup>
                 </div>
                 <div className="product-actions">
-                <Link to={'/checkout'}>
+                  <Link to={'/checkout'}>
                     <Button variant="success" className="me-2">
                       Buy Now
                     </Button>
-                </Link>
+                  </Link>
 
 
-               { 
-                ! isInCart(proId) ?  <Button variant="outline-success" onClick={()=> addCart(proId)}  >Add to Cart</Button>  :
-                  <Button variant="outline-danger" onClick={()=> removeCart(proId)}>Remove from Cart</Button>
+                  {
+                    !isInCart(proId) ? <Button variant="outline-success" onClick={() => addCart(proId)}  >Add to Cart</Button> :
+                      <Button variant="outline-danger" onClick={() => removeCart(proId)}>Remove from Cart</Button>
                   }
                 </div>
               </div>
             </Col>
           </Row>
-  
+
           <Row>
             <Col>
               <Accordion defaultActiveKey="0" className="mb-4">
                 <Accordion.Item eventKey="0">
                   <Accordion.Header>About this item</Accordion.Header>
                   <Accordion.Body>
-                
-                {productData.description}
-                 </Accordion.Body>
+
+                    {productData.description}
+                  </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="1">
                   <Accordion.Header>Benefits</Accordion.Header>
                   <Accordion.Body>   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam sit ut sequi cumque ab ipsum molestias. Doloribus esse perspiciatis necessitatibus quam, doloremque porro unde excepturi corrupti voluptas accusamus quibusdam officiis.
-                      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus obcaecati accusamus iste temporibus mollitia laboriosam consequatur assumenda quasi eveniet eligendi illo sapiente deleniti nemo, sequi at voluptatibus ab eius repudiandae.</Accordion.Body>
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus obcaecati accusamus iste temporibus mollitia laboriosam consequatur assumenda quasi eveniet eligendi illo sapiente deleniti nemo, sequi at voluptatibus ab eius repudiandae.</Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="2">
                   <Accordion.Header>Other info</Accordion.Header>
                   <Accordion.Body>   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam sit ut sequi cumque ab ipsum molestias. Doloribus esse perspiciatis necessitatibus quam, doloremque porro unde excepturi corrupti voluptas accusamus quibusdam officiis.
-                      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus obcaecati accusamus iste temporibus mollitia laboriosam consequatur assumenda quasi eveniet eligendi illo sapiente deleniti nemo, sequi at voluptatibus ab eius repudiandae.</Accordion.Body>
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus obcaecati accusamus iste temporibus mollitia laboriosam consequatur assumenda quasi eveniet eligendi illo sapiente deleniti nemo, sequi at voluptatibus ab eius repudiandae.</Accordion.Body>
                 </Accordion.Item>
               </Accordion>
             </Col>
           </Row>
-  
-         <Row className="mb-4 container-fluid ">
-    <Col>
-      <h3 className="mb-4">Similar Products</h3>
-      <Slider {...settings}>
-        {similarProducts.map(item => (
-          <div key={item.id} className="d-flex justify-content-center p-3">
-            <div className="shadow p-3 bg-white rounded" style={{  width: "80%" }}>
-              <Link to={'/product'}><Image src={item.image} alt={item.name} fluid className="mx-auto mb-2" style={{ mixBlendMode: 'multiply' }} /></Link>
-              <Link to={'/product'} className='text-muted fw-bold '><h6>{item.name}</h6></Link>
-              <p className="fw-bold m-1">₹{item.price}</p>
-              <span className='m-1 text-muted text-decoration-line-through'>₹999</span>
-              <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
-              <div className="d-flex justify-content-between mt-3 ">
-                <button className="btn btn-success rounded-3">
-                  <i className="fa-solid fa-heart"></i>
-                </button>
-                <button className="btn btn-outline-success rounded-3"><i className="fas fa-shopping-cart"></i></button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </Slider>
-    </Col>
-  </Row>
-  
-           <Row>
-              <Review/>
-           </Row>
+
+          <Row className="mb-4 container-fluid ">
+            <Col>
+              <h3 className="mb-4">Similar Products</h3>
+              <Slider {...settings}>
+                {similarProducts.map(item => (
+                  <div key={item.id} className="d-flex justify-content-center p-3">
+                    <div className="shadow p-3 bg-white rounded" style={{ width: "80%" }}>
+                      <Link to={'/product'}><Image src={item.image} alt={item.name} fluid className="mx-auto mb-2" style={{ mixBlendMode: 'multiply' }} /></Link>
+                      <Link to={'/product'} className='text-muted fw-bold '><h6>{item.name}</h6></Link>
+                      <p className="fw-bold m-1">₹{item.price}</p>
+                      <span className='m-1 text-muted text-decoration-line-through'>₹999</span>
+                      <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
+                      <div className="d-flex justify-content-between mt-3 ">
+                        <button className="btn btn-success rounded-3">
+                          <i className="fa-solid fa-heart"></i>
+                        </button>
+                        <button className="btn btn-outline-success rounded-3"><i className="fas fa-shopping-cart"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </Slider>
+            </Col>
+          </Row>
+
+          <Row>
+            <Review productId={productData._id}/>
+          </Row>
         </Container>
       </div>
-      <Footer/>
-   </>
+      <Footer />
+    </>
   );
 }
 

@@ -70,11 +70,23 @@ const updateOrder = async (req, res) => {
     return res.status(500).json({ message: err?.message ?? 'Something went wrong' })
   }
 }
+const getReviewOrders = async (req, res) => {
+  try {
+    const { userId, productId } = req.params;
+    console.log(' userId, productId', userId, productId);
 
+    const orders = await Order.find({ userId, 'products.item.product_id': productId });
+
+    res.status(200).json({ canWriteReview: orders.length > 0 });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
 module.exports = {
     getOrders,
     getUserOrders,
     createOrder,
     updateOrder,
     getOrderById,
+    getReviewOrders
   }

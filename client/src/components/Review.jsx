@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+
+
+
+
+import React, { useState, useEffect } from 'react';
 import { Button, Card, Col, Form, Modal, ProgressBar, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Review.css'; 
+import './Review.css';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
-function Review() {
+function Review({ productId }) {
+  const userDetails = useSelector((state) => state.userDetails);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [newReview, setNewReview] = useState({
     name: '',
@@ -11,51 +18,33 @@ function Review() {
     review: '',
   });
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [canWriteReview, setCanWriteReview] = useState(false);
 
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      name: 'John Doe',
-      rating: 5,
-      review: 'This product is amazing! Highly recommended.',
-      date: '2023-04-25',
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      rating: 4,
-      review: 'Good product, but could be better in terms of durability.',
-      date: '2023-04-20',
-    },
-    {
-      id: 3,
-      name: 'Bob Johnson',
-      rating: 3,
-      review: 'Average product, nothing special.',
-      date: '2023-04-15',
-    },
-    {
-      id: 4,
-      name: 'Alice Brown',
-      rating: 5,
-      review: 'Excellent product! Would buy again.',
-      date: '2023-04-10',
-    },
-    {
-      id: 5,
-      name: 'Chris Evans',
-      rating: 2,
-      review: 'Disappointing quality, not worth the price.',
-      date: '2023-04-05',
-    },
-    {
-      id: 6,
-      name: 'Emily White',
-      rating: 4,
-      review: 'Impressed with the performance.',
-      date: '2023-04-01',
-    },
-  ]);
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/reviews/${productId}`);
+        setReviews(response.data.data);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+
+    const checkCanWriteReview = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/orders/user/${userDetails._id}/product/${productId}`);
+        setCanWriteReview(response.data.canWriteReview);
+      } catch (error) {
+        console.error('Error checking if user can write review:', error);
+      }
+    };
+
+    fetchReviews();
+    if (userDetails) {
+      checkCanWriteReview();
+    }
+  }, [productId, userDetails]);
 
   const handleOpenReviewModal = () => setShowReviewModal(true);
   const handleCloseReviewModal = () => setShowReviewModal(false);
@@ -64,18 +53,24 @@ function Review() {
     setNewReview({ ...newReview, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitReview = () => {
-    const newReviewData = {
-      id: reviews.length + 1,
-      name: newReview.name,
-      rating: parseInt(newReview.rating, 10),
-      review: newReview.review,
-      date: new Date().toISOString().split('T')[0],
-    };
+  const handleSubmitReview = async () => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/reviews`, {
+        productId,
+        userId:userDetails._id,
+        ...newReview,
+      }, {
+        headers: {
+          Authorization: `Bearer ${userDetails.token}`,
+        },
+      });
 
-    setReviews([...reviews, newReviewData]);
-    setNewReview({ name: '', rating: 0, review: '' });
-    handleCloseReviewModal();
+      setReviews([...reviews, response.data.data]);
+      setNewReview({ name: '', rating: 0, review: '' });
+      handleCloseReviewModal();
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
   };
 
   const handleReadMore = () => {
@@ -146,6 +141,7 @@ function Review() {
                     variant="outline-success"
                     className="rounded-pill w-100 p-2 mt-2"
                     onClick={handleOpenReviewModal}
+                    disabled={!canWriteReview}
                   >
                     Write a Review
                   </Button>
