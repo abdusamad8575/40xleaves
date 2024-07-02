@@ -212,7 +212,7 @@ const EditProduct = () => {
                         rows={5}
                      />
                   </Grid>
-                  <Grid item xs={12} sm={4} mt={'auto'}>
+                  <Grid item xs={12} sm={12} mt={'auto'}>
                      <Grid item xs={12}>
                         <Button onClick={handleSubmit}>UPDATE PRODUCT</Button>
                         <Button color="secondary" onClick={handleDelete}>Delete PRODUCT</Button>

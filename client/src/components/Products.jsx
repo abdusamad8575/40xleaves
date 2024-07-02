@@ -28,7 +28,6 @@ const userDetails = useSelector(state => state.userDetails);
 
         const response = await axiosInstance.get(urlQuery);
         setProducts(response.data.data)
-       // console.log(response.data.data)
        const wishlistResponse = await axiosInstance.get('/api/v1/user/getwishlist');
       setWishlistItems(wishlistResponse.data.data);
       const cartResponse = await axiosInstance.get('/api/v1/user/getcarts');

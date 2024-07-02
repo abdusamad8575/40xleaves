@@ -22,13 +22,11 @@ const getCategoryById = async (req, res) => {
 }
 
 const addCategory = async (req, res) => {
-  console.log('hello');
-
 console.log('reached category')
 
   const { name, desc } = req?.body
   const image = req?.file?.filename
-  try {
+  try {    
     let arr = []
     const categoryData = await Category.find()
     categoryData.map(x => {
@@ -39,14 +37,15 @@ console.log('reached category')
     if (isExisting === -1) {
       const cat = new Category({ name:name.toUpperCase(), desc, image })
       await cat.save()
-      res.status(201).json({ data: cat, message: 'category created successfully' });
+      
+      return res.status(200).json({ data: cat, message: 'category created successfully' });
     } else {
       return res.status(400).json({ message: 'category already exists' })
     }
   } catch (error) {
     console.log(error);
   }
-}
+}     
 const updateCategory = async (req, res) => {
   const {_id,name, desc ,isAvailable} = req?.body
   const image = req?.file?.filename
