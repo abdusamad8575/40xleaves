@@ -1,5 +1,5 @@
 const Category = require('../models/category')
-// const fs = require('fs');
+const fs = require('fs');
 
 const getCategory = async (req, res) => {
   try {
@@ -26,6 +26,7 @@ console.log('reached category')
 
   const { name, desc } = req?.body
   const image = req?.file?.filename
+  console.log('name, desc',name, desc,image)
   try {    
     let arr = []
     const categoryData = await Category.find()
@@ -35,6 +36,7 @@ console.log('reached category')
     const category = name.toUpperCase()
     const isExisting = arr.findIndex(x => x == category)
     if (isExisting === -1) {
+      console.log('reached category1')
       const cat = new Category({ name:name.toUpperCase(), desc, image })
       await cat.save()
       
@@ -49,7 +51,6 @@ console.log('reached category')
 const updateCategory = async (req, res) => {
   const {_id,name, desc ,isAvailable} = req?.body
   const image = req?.file?.filename
-  console.log('hello2',image);
   try {
     const data = await Category.findById(_id);
     if (!data) {
