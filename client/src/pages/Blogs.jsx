@@ -4,6 +4,7 @@ import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
 import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
+import { ServerURL } from '../services/baseUrl';
 
 const Blogs = () => {
   const [blog,setBlog] = useState([])
@@ -78,7 +79,7 @@ let urlQuery = '';
           {blog.map(item => (
             <div className="col-lg-6 mb-4" key={item._id}>
               <div className="card border-0 shadow">
-                <img src={`http://localhost:5000/uploads/${item.image}`} className="card-img-top" alt={item.title} />
+                <img src={`${ServerURL}/uploads/${item.image}`} className="card-img-top" alt={item.title} style={{width:'100%', height:'400px', objectFit:'cover'}} />
                 <div className="card-body">
                   <h5 className="card-title">{item.title}</h5>
                   <p className="card-text">{item.description}</p>

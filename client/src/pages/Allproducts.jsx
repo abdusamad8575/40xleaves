@@ -209,6 +209,7 @@ const Allproducts = () => {
                       <img
                         src={`${ServerURL}/uploads/${item.image[0]}`}
                         className="card-img-top"
+                        style={{width:'100%', height:'350px', objectFit:'cover'}} 
                         alt={item.name}
                       />
                     </Link>

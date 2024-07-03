@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../axios';
 
 import './Category.css';
+import { ServerURL } from '../services/baseUrl';
 
 function Category() {
   const [categories, setCategories] = useState([]);
@@ -42,10 +43,9 @@ function Category() {
               >
                 <div className="category-content text-center shadow mt-3 rounded p-1">
                   <img
-                    src={`http://localhost:5000/uploads/${category.image}`}
+                    src={`${ServerURL}/uploads/${category.image}`}
                     alt={category.name}
-                    width={150}
-                    height={150}
+                    style={{width:'100%', height:'80%', objectFit:'cover'}}
                     className="rounded catimg"
                   />
                   <h5 className="text-center fw-bold">{category.name}</h5>
