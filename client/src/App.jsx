@@ -1,10 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Provider } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
-import Footer from './components/Footer';
-import MainNav from './components/MainNav';
-import MiddleNav from './components/MiddleNav';
-import TopNav from './components/TopNav';
 import About from './pages/About';
 import Allproducts from './pages/Allproducts';
 import Blogs from './pages/Blogs';
@@ -13,16 +10,15 @@ import Checkout from './pages/Checkout';
 import ContactUs from './pages/ContactUs';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import PageNotFound from './pages/PageNotFound';
-import Product from './pages/Product';
-import Register from './pages/Register';
-import Wishlist from './pages/Wishlist';
-import Profile from './pages/Profile';
-import ProfileInfo from './pages/ProfileInfo';
 import ManageAddress from './pages/ManageAddress';
 import Orders from './pages/Orders';
+import PageNotFound from './pages/PageNotFound';
+import Product from './pages/Product';
+import Profile from './pages/Profile';
+import ProfileInfo from './pages/ProfileInfo';
+import Register from './pages/Register';
 import SingleOrder from './pages/SingleOrder';
-import { Provider } from 'react-redux';
+import Wishlist from './pages/Wishlist';
 import store from './redux/store';
 
 

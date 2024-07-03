@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import logo from '../assets/images/logo.png';
+import { ServerURL } from '../services/baseUrl';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -412,7 +413,7 @@ if(paymentOption === 'cod'){
                   {cartData.item.map(product => (
                     <div key={product.id} className="row mb-3 align-items-center border-bottom pb-3">
                       <div className="col-md-3">
-                        <img   src={`http://localhost:5000/uploads/${product.productId.image[0]}`} alt={product.name} className="img-fluid" />
+                        <img   src={`${ServerURL}/uploads/${product.productId.image[0]}`} alt={product.name} className="img-fluid" />
                       </div>
                       <div className="col-md-6">
                         <h5 className='fw-bold text-muted '>{product.productId.name}</h5>

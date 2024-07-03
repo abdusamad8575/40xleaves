@@ -296,12 +296,12 @@ setAddressDatas((prevAddresses) =>
   <div className="d-flex justify-content-end gap-2 mt-4">
 
   <Button variant="primary" type="submit" onClick={()=>handleShowEdit(addr)} >
-        edit
+        Edit
       </Button>
 
 
   {! addr.primary && (<Button variant="primary" type="submit" onClick={(e)=> setPrimary(addr._id)} >
-        default
+        Default
       </Button>)}
   </div>
 

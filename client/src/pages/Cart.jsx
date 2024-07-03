@@ -6,6 +6,7 @@ import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
 import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
+import { ServerURL } from '../services/baseUrl';
 
 function Cart() {
 const [cartData,setCartData] = useState([])
@@ -198,7 +199,7 @@ if(item.qty <=  item.productId.stock && operation==='increment'){
                   <div className="row g-0">
                     <div className="col-md-4 col-5 d-flex align-items-center ">
                       <img
-                         src={`http://localhost:5000/uploads/${item.productId.image[0]}`}
+                         src={`${ServerURL}/uploads/${item.productId.image[0]}`}
 
                         className="img-fluid rounded"
                         alt={item.name}

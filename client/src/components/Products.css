@@ -1,0 +1,28 @@
+/* Custom CSS for consistent item height and image fit */
+.slider-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 80%; /* Ensure width is consistent */
+    max-width: 300px; /* Optional: Max width to prevent cards from getting too wide */
+  }
+  
+  .product-card img {
+    object-fit: cover;
+    width: 100%;
+    height: 200px; /* Adjust this height as needed */
+  }
+  
+  .product-info {
+    flex-grow: 1;
+  }
+  

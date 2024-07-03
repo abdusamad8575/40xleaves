@@ -6,6 +6,7 @@ import TopNav from '../components/TopNav';
 import MiddleNav from '../components/MiddleNav';
 import MainNav from '../components/MainNav';
 import Footer from '../components/Footer';
+import { ServerURL } from '../services/baseUrl';
 
 function Wishlist() {
 
@@ -118,7 +119,7 @@ function Wishlist() {
               <div className="card h-100 border">
                 <div className="card-img-top text-center ">
                   <img
-                   src={`http://localhost:5000/uploads/${item.image[0]}`}
+                   src={`${ServerURL}/uploads/${item.image[0]}`}
                     alt={item.name}
                     className="img-fluid"
                     style={{ maxHeight: '200px', objectFit: 'contain' }}

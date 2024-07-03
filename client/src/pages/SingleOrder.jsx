@@ -9,6 +9,7 @@ import Footer from '../components/Footer';
 import { useParams } from 'react-router-dom';
 
 import './SingleOrder.css';
+import { ServerURL } from '../services/baseUrl';
 
 function SingleOrder() {
   const [progress, setProgress] = useState(0);
@@ -135,14 +136,14 @@ function SingleOrder() {
          
             {
              productsData.map((item,index)=>(
-                <Card className="shadow" key={index} >
+                <Card className="shadow mb-2" key={index} >
                 <Card.Body>
- <Row className="align-items-center">
+              <Row className="align-items-center">
               <Col md={3} className="mb-3 mb-md-0">
                 <div className="d-flex align-items-center">
                   <div className="me-3">
                     <img
-                       src={`http://localhost:5000/uploads/${item.product_id.image[0]}`}
+                       src={`${ServerURL}/uploads/${item.product_id.image[0]}`}
                       alt=""
                       className="img-fluid"
                     />

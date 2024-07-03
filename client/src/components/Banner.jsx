@@ -2,6 +2,7 @@ import React,{useState,useEffect} from 'react';
 import axiosInstance from '../axios'
 import image from '../assets/images/banner.jpg';
 import { Carousel } from 'react-bootstrap';
+import { ServerURL } from '../services/baseUrl';
 
 function Banner() {
 
@@ -52,7 +53,7 @@ let urlQuery = '';
          <Carousel activeIndex={index} onSelect={handleSelect}>
       {banner.map((item, idx) => (
         <Carousel.Item key={idx}>
-          <img className="d-block img-fluid" src={`http://localhost:5000/uploads/${item.image}`} alt={`Slide ${idx}`} />
+          <img className="d-block img-fluid" src={`${ServerURL}/uploads/${item.image}`} alt={`Slide ${idx}`} style={{width:'100%'}}/>
         </Carousel.Item>
       ))}
     </Carousel>

@@ -61,7 +61,7 @@ useEffect(()=>{
         <Container>
           <Row>
             <Col>
-              <Slider {...settings}>
+              {/* <Slider {...settings}>
                 {testimonials.map(item => (
                   <div key={item._id} className='text-center'>
                     <article className='p-3'>{item.comment}</article>
@@ -72,9 +72,17 @@ useEffect(()=>{
 
                   </div>
                 ))}
+              </Slider> */}
+              <Slider {...settings}>
+                {items.map(item => (
+                  <div key={item.id} className='text-center'>
+                    <article className='p-3'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ab repellat nostrum expedita, tenetur sint facere sit asperiores mollitia, architecto nisi maxime! Soluta veniam repudiandae dignissimos omnis ea unde labore quae!</article>
+                    <img src={item.imageUrl} alt={item.name}  className="img-fluid mx-auto rounded-circle " width={80} />
+                  </div>
+                ))}
               </Slider>
               <div className='text-center mt-4 p-5 '>
-                <button className='btn btn-success rounded-5 px-4'>View All Testimonial</button>
+                {/* <button className='btn btn-success rounded-5 px-4'>View All Testimonial</button> */}
               </div>
             </Col>
           </Row>
