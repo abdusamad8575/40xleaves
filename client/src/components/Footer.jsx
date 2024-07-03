@@ -13,9 +13,9 @@ function Footer() {
               <li><a href="/" className="text-light">Home</a></li>
               <li><a href="/about" className="text-light">About</a></li>
               <li><a href="/allproducts" className="text-light">Products</a></li>
-              <li><a href="#" className="text-light">Privacy Policy</a></li>
-              <li><a href="#" className="text-light">Shipping Policy</a></li>
-              <li><a href="#" className="text-light">Terms & Conditions</a></li>
+              <li><a href="/privacypolicy" className="text-light">Privacy Policy</a></li>
+              <li><a href="/shippingpolicy" className="text-light">Shipping Policy</a></li>
+              <li><a href="/termsandcondition" className="text-light">Terms & Conditions</a></li>
             </ul>
           </Col>
           <Col md={4} className="mb-4">

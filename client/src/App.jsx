@@ -20,6 +20,9 @@ import Register from './pages/Register';
 import SingleOrder from './pages/SingleOrder';
 import Wishlist from './pages/Wishlist';
 import store from './redux/store';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndCondition from './pages/TermsAndCondition';
+import ShippingPolicy from './pages/ShippingPolicy';
 
 
 function App() {
@@ -44,6 +47,9 @@ function App() {
       <Route path='/manageaddress' element={<ManageAddress/>}/>
       <Route path='/order' element={<Orders/>}/>
       <Route path='/ordertrack/:orderId' element={<SingleOrder/>}/>
+      <Route path='/privacypolicy' element={<PrivacyPolicy/>}/>
+      <Route path='/termsandcondition' element={<TermsAndCondition/>}/>
+      <Route path='/shippingpolicy' element={<ShippingPolicy/>}/>
       <Route path='*' element={<PageNotFound/>}/>
      </Routes>
  
