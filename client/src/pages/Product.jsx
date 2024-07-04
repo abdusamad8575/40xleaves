@@ -278,25 +278,28 @@ function Product() {
     },
   ];
 
-  const settings = {
-    dots: true,
-    infinite: true,
+  const sliderSettings = {
+    dots: products.length > 1,
+    infinite: products.length > 1,
     speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    autoplay: true,
+    slidesToShow: products.length < 4 ? products.length : 4,
+    slidesToScroll: products.length < 4 ? products.length : 1,
+    autoplay: products.length > 1,
     autoplaySpeed: 3000,
+    arrows: products.length > 1,
     responsive: [
       {
         breakpoint: 992,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: products.length < 2 ? products.length : 2,
+          slidesToScroll: products.length < 2 ? products.length : 1,
         },
       },
       {
         breakpoint: 768,
         settings: {
           slidesToShow: 1,
+          slidesToScroll: 1,
         },
       },
     ],
@@ -496,29 +499,31 @@ function Product() {
           </Row>
 
           <Row className="mb-4 container-fluid ">
-    <Col>
-      <h3 className="mb-4">Similar Products</h3>
-      <Slider {...settings}>
-        {similarProducts.map(item => (
-          <div key={item.id} className="d-flex justify-content-center p-3">
-            <div className="shadow p-3 bg-white rounded" style={{  width: "80%" }}>
-              <Link to={'/product'}><Image src={item.image} alt={item.name} fluid className="mx-auto mb-2" style={{ mixBlendMode: 'multiply' }} /></Link>
-              <Link to={'/product'} className='text-muted fw-bold '><h6>{item.name}</h6></Link>
-              <p className="fw-bold m-1">₹{item.price}</p>
-              <span className='m-1 text-muted text-decoration-line-through'>₹999</span>
-              <span className='text-success fw-bold bg-success-subtle p-1'>70% off</span>
-              <div className="d-flex justify-content-between mt-3 ">
-                <button className="btn btn-success rounded-3">
-                  <i className="fa-solid fa-heart"></i>
-                </button>
-                <button className="btn btn-outline-success rounded-3"><i className="fas fa-shopping-cart"></i></button>
-              </div>
+  <Col md={products.length === 1 ? 3 : undefined}>
+    <h3 className="mb-4">Similar Products</h3>
+    <Slider {...sliderSettings}>
+      {products.map(item => (
+        <div key={item._id} className="d-flex justify-content-center p-3">
+          <div className="shadow p-3 bg-white rounded" style={{  width: "80%" }}>
+            <Link to={`/product/${item._id}/${item.category}`}>
+              <Image src={`${ServerURL}/uploads/${item.image[0]}`} alt={item.name} fluid className="mx-auto mb-2" style={{ mixBlendMode: 'multiply' }} />
+            </Link>
+            <Link to={'/product'} className='text-muted fw-bold '><h6>{item.name}</h6></Link>
+            <p className="fw-bold m-1">₹{item.sale_rate}</p>
+            <span className='m-1 text-muted text-decoration-line-through'>₹{item.price}</span>
+            <span className='text-success fw-bold bg-success-subtle p-1'>{item.discount}% off</span>
+            <div className="d-flex justify-content-between mt-3 ">
+              <button className="btn btn-success rounded-3">
+                <i className="fa-solid fa-heart"></i>
+              </button>
+              <button className="btn btn-outline-success rounded-3"><i className="fas fa-shopping-cart"></i></button>
             </div>
           </div>
-        ))}
-      </Slider>
-    </Col>
-  </Row>
+        </div>
+      ))}
+    </Slider>
+  </Col>
+</Row>
 
           <Row>
             <Review productId={productData._id} />
@@ -526,7 +531,16 @@ function Product() {
         </Container>
       </div>
 
-      {/* <Row className="mb-4 container-fluid ">
+    
+      <Footer />
+    </>
+  );
+}
+
+export default Product;
+
+
+  {/* <Row className="mb-4 container-fluid ">
             <Col>
               <h3 className="mb-4">Similar Products</h3>
               <Slider {...settings}>
@@ -577,10 +591,3 @@ function Product() {
               </Slider>
             </Col>
           </Row> */}
-
-      <Footer />
-    </>
-  );
-}
-
-export default Product;

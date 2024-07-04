@@ -2,6 +2,7 @@ import React,{useState,useEffect} from 'react';
 import axiosInstance from '../axios'
 import image from '../assets/images/banner.jpg';
 import { Col, Container, Row } from 'react-bootstrap';
+import { ServerURL } from '../services/baseUrl';
 
 function Brands() {
   const [brands,setbrands] = useState([])
@@ -19,7 +20,7 @@ function Brands() {
 
         const response = await axiosInstance.get(`/api/v1/banners`);
         setBanner(response.data.data[0])
-       // console.log(response.data.data[0])
+      //  console.log(response.data.data[0])
         
       } catch (error) {
         console.log(error)
@@ -77,7 +78,7 @@ useEffect(()=>{
     <div className="container-fluid">
       <div className="row">
         <div className="col-12">
-          <img className="d-block img-fluid" src={image} alt="banner" style={{width:'100%' }} />
+          <img className="d-block img-fluid" src={`${ServerURL}/uploads/${banner.image}`} alt="banner" style={{width:'100%' }} />
         </div>
         <div className='col-12'>
         <div className="container mt-4">

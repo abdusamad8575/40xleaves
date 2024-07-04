@@ -169,7 +169,7 @@ if(item.qty <=  item.productId.stock && operation==='increment'){
    
 
   const discount = 300; // Example discount
-  const deliveryCharges = 300; // Example delivery charges
+  const deliveryCharges = 0; // Example delivery charges
 
   
 

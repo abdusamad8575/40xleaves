@@ -155,7 +155,7 @@ function Products({ setNotification }) {
         <h2 className='text-center mb-5 p-3 fw-bold'>Our Products</h2>
         <Container>
           <Row>
-            <Col>
+            <Col md={products.length === 1 ? 3 : undefined}>
               <Slider {...settings}>
                 {products.map(item => (
                   <div key={item._id} className='d-flex justify-content-center align-items-center p-2 slider-item'>
