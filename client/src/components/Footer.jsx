@@ -40,8 +40,8 @@ function Footer() {
         <hr className="bg-success" />
         <Row className="align-items-center">
           <Col className="text-center text-muted text-white ">
-            <p className="mb-0 text-white ">Designed by <a href="https://www.acmeflare.in/" className="text-success">Acmeflare</a></p>
-            <p className="mb-0 text-white ">Copyright &copy; {new Date().getFullYear()} </p>
+            <p className="mb-0 text-white ">Copyright &copy; 40X Leaves {new Date().getFullYear()}  </p>
+            {/* <p className="mb-0 text-white ">Designed by <a href="https://www.acmeflare.in/" className="text-success">Acmeflare</a></p> */}
           </Col>
         </Row>
       </Container>
