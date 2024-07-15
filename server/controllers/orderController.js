@@ -1,4 +1,4 @@
-const Order = require('../models/Order')
+const Order = require('../models/order')
 const User = require('../models/user');
 const Product = require('../models/product');
 const Address = require('../models/address');
@@ -29,8 +29,8 @@ const getAdminOrders = async (req, res) => {
 const getUserOrders = async (req, res) => {
   try {
     const { _id } = req?.decoded
-    const data = await Order.find({ userId:_id }).populate('products.item.product_id') // Populate all fields in products
-    .populate('address'); // Populate all fields in address
+    const data = await Order.find({ userId: _id }).populate('products.item.product_id') // Populate all fields in products
+      .populate('address'); // Populate all fields in address
     res.status(200).json({ data })
   } catch (error) {
     console.log(error);
@@ -40,16 +40,16 @@ const getUserOrders = async (req, res) => {
 
 const getOrderById = async (req, res) => {
   try {
-      const orderId = req.params.orderId;
-      console.log(orderId);
-      const data = await Order.findById(orderId)
-          .populate('products.item.product_id')
-          .populate('address');
-     // console.log(data);
-      res.status(200).json({ data });
+    const orderId = req.params.orderId;
+    console.log(orderId);
+    const data = await Order.findById(orderId)
+      .populate('products.item.product_id')
+      .populate('address');
+    // console.log(data);
+    res.status(200).json({ data });
   } catch (error) {
-      console.log(error);
-      return res.status(500).json({ message: error?.message ?? 'Something went wrong' });
+    console.log(error);
+    return res.status(500).json({ message: error?.message ?? 'Something went wrong' });
   }
 };
 
@@ -57,26 +57,25 @@ const getOrderById = async (req, res) => {
 const createOrder = async (req, res) => {
   const { _id } = req?.decoded
 
-  const {  payment_mode, amount, address, products } = req?.body
+  const { payment_mode, amount, address, products } = req?.body
   try {
-    const data = await Order.create({ userId:_id, payment_mode, amount, address, products })
-    console.log('prod qty findings ',products.item)
+    const data = await Order.create({ userId: _id, payment_mode, amount, address, products })
+    console.log('prod qty findings ', products.item)
 
-// Remove cart items from the user after order creation
-const user = await User.findById(_id);
-user.cart.item = []; // Clear the cart items
-user.cart.totalPrice = 0; // Reset total price to zero
-await user.save(); // Save the user with cleared cart
+    const user = await User.findById(_id);
+    user.cart.item = []; // Clear the cart items
+    user.cart.totalPrice = 0; // Reset total price to zero
+    await user.save(); // Save the user with cleared cart
 
-for (const item of products.item) {
-  const product = await Product.findById(item.product_id);
+    for (const item of products.item) {
+      const product = await Product.findById(item.product_id);
 
-  if (product) {
-    // Reduce the product stock by the ordered quantity
-    product.stock -= item.qty;
-    await product.save();
-  }
-}
+      if (product) {
+        // Reduce the product stock by the ordered quantity
+        product.stock -= item.qty;
+        await product.save();
+      }
+    }
 
     res.status(201).json({ data, message: 'Order placed successfully' });
   } catch (error) {
@@ -89,7 +88,7 @@ const updateOrder = async (req, res) => {
   const { _id, status } = req?.body
   try {
     const data = await Order.updateOne({ _id },
-      { $set: { status }})
+      { $set: { status } })
     res.status(201).json({ data, message: 'Order updated successfully' });
   } catch (error) {
     console.log(error);
@@ -112,7 +111,7 @@ const getReviewOrders = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
   const { orderId, newStatus } = req.body;
   console.log(orderId, newStatus);
-  
+
   try {
     const order = await Order.findById(orderId);
     if (!order) {
@@ -129,12 +128,12 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 module.exports = {
-    getOrders,
-    getUserOrders,
-    createOrder,
-    updateOrder,
-    getOrderById,
-    getReviewOrders,
-    getAdminOrders,
-    updateOrderStatus
-  }
+  getOrders,
+  getUserOrders,
+  createOrder,
+  updateOrder,
+  getOrderById,
+  getReviewOrders,
+  getAdminOrders,
+  updateOrderStatus
+}

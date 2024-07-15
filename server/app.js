@@ -4,12 +4,12 @@ const router = require('./routes/index.js');
 const morgan = require('morgan');
 const path = require('path')
 const dotenv = require('dotenv');
-dotenv.config();   
+dotenv.config();      
 
 const app = express();  
 const corsOptions = {
   origin: [process.env.CLIENT_PORT_LOCAL,process.env.ADMIN_PORT_LOCAL],
-  credentials: true, // Indicates whether or not the response to the request can be exposed when the credentials flag is true
+  credentials: true, 
 };
 app.use(cors(corsOptions));    
 // app.use(cors());    
