@@ -2,6 +2,15 @@ const Order = require('../models/order')
 const User = require('../models/user');
 const Product = require('../models/product');
 const Address = require('../models/address');
+const crypto = require('crypto');
+const axios = require('axios');
+require("dotenv").config();
+
+
+let salt_key = process.env.SALT_KEY
+let merchant_id = process.env.MERCHANT_ID
+
+
 
 const getOrders = async (req, res) => {
   try {
@@ -98,7 +107,7 @@ const updateOrder = async (req, res) => {
 const getReviewOrders = async (req, res) => {
   try {
     const { userId, productId } = req.params;
-    console.log(' userId, productId', userId, productId);
+    // console.log(' userId, productId', userId, productId);
 
     const orders = await Order.find({ userId, 'products.item.product_id': productId });
 
@@ -127,6 +136,102 @@ const updateOrderStatus = async (req, res) => {
     return res.status(500).json({ message: error?.message ?? 'Something went wrong' });
   }
 };
+
+
+const phonepeIntagretion = async (req, res) => {
+
+  try {
+    console.log(req.body)
+
+    const merchantTransactionId = req.body.transactionId;
+    const data = {
+      merchantId: merchant_id,
+      merchantTransactionId: merchantTransactionId,
+      merchantUserId: req.body.MUID,
+      name: req.body.name,
+      amount: req.body.amount * 100,
+      redirectUrl: `${process.env.SERVER_PORT_LOCAL}/api/v1/orders/status/?id=${merchantTransactionId}`,
+      redirectMode: 'POST',
+      mobileNumber: req.body.number,
+      paymentInstrument: {
+        type: 'PAY_PAGE'
+      }
+    };
+    const payload = JSON.stringify(data);   
+    const payloadMain = Buffer.from(payload).toString('base64');
+    const keyIndex = 1;
+    const string = payloadMain + '/pg/v1/pay' + salt_key;
+    const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+    const checksum = sha256 + '###' + keyIndex;
+
+    // const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
+    const prod_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+
+    const options = {
+      method: 'POST',
+      url: prod_URL,
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-VERIFY': checksum
+      },
+      data: {
+        request: payloadMain
+      }
+    };
+
+    axios.request(options).then(function (response) {
+      console.log('response12',response.data)
+
+      return res.json(response.data)
+    })
+      .catch(function (error) {
+        console.error(error);
+      });
+
+  } catch (error) {
+    res.status(500).send({
+      message: error.message,
+      success: false
+    })
+  }
+}
+const phonepeStatus = async (req, res) => {
+
+  console.log('phonepeStatus');
+  const merchantTransactionId = req.query.id
+    const merchantId = merchant_id
+
+    const keyIndex = 1;
+    const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + salt_key;
+    const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+    const checksum = sha256 + "###" + keyIndex;
+
+    const options = {
+        method: 'GET',
+        url: `https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`,
+        headers: {
+            accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-VERIFY': checksum,
+            'X-MERCHANT-ID': `${merchantId}`
+        }
+    };
+
+    // CHECK PAYMENT STATUS
+    axios.request(options).then(async (response) => {
+            if (response.data.success === true) {
+                const url = `http://localhost:5173/success`
+                return res.redirect(url)
+            } else {
+                const url = `http://localhost:5173/failure`
+                return res.redirect(url)
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+}
 module.exports = {
   getOrders,
   getUserOrders,
@@ -135,5 +240,7 @@ module.exports = {
   getOrderById,
   getReviewOrders,
   getAdminOrders,
-  updateOrderStatus
+  updateOrderStatus,
+  phonepeIntagretion,
+  phonepeStatus
 }
