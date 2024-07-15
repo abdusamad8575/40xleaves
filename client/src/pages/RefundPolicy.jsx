@@ -33,7 +33,7 @@ To initiate a return, please contact our customer service team at 40xleaves@gmai
 <b>Refunds
 </b><br/><br/>
 
-Once your return is received and inspected, we will notify you of the approval or rejection of your refund. If approved, your refund will be processed, and a credit will automatically be applied to your original method of payment within a certain number of days.<br/><br/>
+Once your return is received and inspected, we will notify you of the approval or rejection of your refund. If approved, your refund will be processed, and a credit will automatically be applied to your original method of payment within 7 days.<br/><br/>
 <b>Late or Missing Refunds
 </b><br/><br/>
 Late or Missing Refunds
