@@ -9,7 +9,7 @@ require("dotenv").config();
 
 let salt_key = process.env.SALT_KEY
 let merchant_id = process.env.MERCHANT_ID
-
+let orderDetails = {}
 
 
 const getOrders = async (req, res) => {
@@ -142,22 +142,24 @@ const phonepeIntagretion = async (req, res) => {
 
   try {
     console.log(req.body)
-
-    const merchantTransactionId = req.body.transactionId;
-    const data = {
+    const { _id } = req?.decoded
+    const { data, orderData } = req?.body
+    orderDetails = { ...orderData, _id }
+    const merchantTransactionId = data?.transactionId;
+    const details = {
       merchantId: merchant_id,
       merchantTransactionId: merchantTransactionId,
-      merchantUserId: req.body.MUID,
-      name: req.body.name,
-      amount: req.body.amount * 100,
+      merchantUserId: data?.MUID,
+      name: data?.name,
+      amount: data?.amount * 100,
       redirectUrl: `${process.env.SERVER_PORT_LOCAL}/api/v1/orders/status/?id=${merchantTransactionId}`,
       redirectMode: 'POST',
-      mobileNumber: req.body.number,
+      mobileNumber: data?.number,
       paymentInstrument: {
         type: 'PAY_PAGE'
       }
     };
-    const payload = JSON.stringify(data);   
+    const payload = JSON.stringify(details);
     const payloadMain = Buffer.from(payload).toString('base64');
     const keyIndex = 1;
     const string = payloadMain + '/pg/v1/pay' + salt_key;
@@ -181,7 +183,7 @@ const phonepeIntagretion = async (req, res) => {
     };
 
     axios.request(options).then(function (response) {
-      console.log('response12',response.data)
+      console.log('response12', response.data)
 
       return res.json(response.data)
     })
@@ -200,37 +202,53 @@ const phonepeStatus = async (req, res) => {
 
   console.log('phonepeStatus');
   const merchantTransactionId = req.query.id
-    const merchantId = merchant_id
+  const merchantId = merchant_id
 
-    const keyIndex = 1;
-    const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + salt_key;
-    const sha256 = crypto.createHash('sha256').update(string).digest('hex');
-    const checksum = sha256 + "###" + keyIndex;
+  const keyIndex = 1;
+  const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + salt_key;
+  const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+  const checksum = sha256 + "###" + keyIndex;
 
-    const options = {
-        method: 'GET',
-        url: `https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`,
-        headers: {
-            accept: 'application/json',
-            'Content-Type': 'application/json',
-            'X-VERIFY': checksum,
-            'X-MERCHANT-ID': `${merchantId}`
+  const options = {
+    method: 'GET',
+    url: `https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`,
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-VERIFY': checksum,
+      'X-MERCHANT-ID': `${merchantId}`
+    }
+  };
+
+  // CHECK PAYMENT STATUS
+  axios.request(options).then(async (response) => {
+    if (response.data.success === true) {
+      const { payment_mode, amount, address, products, _id } = orderDetails
+      try {
+        const data = await Order.create({ userId: _id, payment_mode, amount, address, products })
+        const user = await User.findById(_id);
+        user.cart.item = [];
+        user.cart.totalPrice = 0;
+        await user.save();
+        for (const item of products.item) {
+          const product = await Product.findById(item.product_id);
+          if (product) {
+            product.stock -= item.qty;
+            await product.save();
+          }
         }
-    };
-
-    // CHECK PAYMENT STATUS
-    axios.request(options).then(async (response) => {
-            if (response.data.success === true) {
-                const url = `http://localhost:5173/success`
-                return res.redirect(url)
-            } else {
-                const url = `http://localhost:5173/failure`
-                return res.redirect(url)
-            }
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+        return res.redirect(process.env.CLIENT_PORT_LOCAL)
+      } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: err?.message ?? 'Something went wrong' })
+      }
+    } else {
+      return res.redirect(process.env.CLIENT_PORT_LOCAL)
+    }
+  })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 module.exports = {
   getOrders,

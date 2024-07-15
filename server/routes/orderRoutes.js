@@ -11,7 +11,7 @@ router.patch('/',authorization, updateOrder);
 router.get('/getorderbyid/:orderId', authorization, getOrderById);
 router.get('/user/:userId/product/:productId', getReviewOrders);
 router.put('/update-status', updateOrderStatus);
-router.post('/initiate-payment', phonepeIntagretion);
+router.post('/initiate-payment', authorization, phonepeIntagretion);
 router.post('/status', phonepeStatus);
 
 

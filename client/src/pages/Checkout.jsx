@@ -34,12 +34,12 @@ const Checkout = () => {
 
 
   const data = {
-    name: 'Vikas',
-    amount: 1,
-    number: '9999999999',
+    name: orderAddress?.firstname,
+    amount: salePriceTotal,
+    number: orderAddress?.mobile,
     MUID: "MUID" + Date.now(),
     transactionId: 'T' + Date.now(),
-}
+  }
 
   const fetchAddress = async (urlQ) => {
     try {
@@ -267,16 +267,6 @@ const Checkout = () => {
   };
   //
 
-  React.useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
   const handlePaymentSuccess = async () => {
     const orderFormat = {};
 
@@ -325,54 +315,39 @@ const Checkout = () => {
     if (paymentOption === "cod") {
       handlePaymentSuccess();
     } else if (paymentOption === "phonepe") {
-      // const options = {
-      //   key: "rzp_test_wNhVz81BFxrIrL",
-      //   amount: parseInt(1000) * 100, 
-      //   currency: "INR",
-      //   name: "TUT FINDER",
-      //   description: "Purchase course",
-      //   handler: function (response) {
-      //     handlePaymentSuccess();
-      //   },
-      // };
+      const mappedCartItems = await cartData?.item.map((item) => ({
+        product_id: item.productId._id,
+        qty: item.qty,
+        price: item.productId.sale_rate,
+      }));
 
-      // const rzp = new window.Razorpay(options);
-      // rzp.open();
+      const totalPrice = mappedCartItems.reduce(
+        (total, item) => total + item.qty * item.price,
+        0
+      );
 
-      
+      const productsOrderData = {
+        item: mappedCartItems,
+        totalPrice,
+      };
 
-      // try {
-      //   const response = await axiosInstance.post('/api/v1/orders/initiate-payment', {
-      //     amount: 100, // Amount in INR
-      //     orderId: 'order-id-12345'
-      //   });
+      const orderData = {
+        payment_mode: paymentOption,
+        amount: productsOrderData.totalPrice,
+        address: orderAddress._id,
+        products: productsOrderData,
+      }
+      console.log(orderAddress);
+      await axiosInstance.post('/api/v1/orders/initiate-payment', { data, orderData }).then(res => {
 
-      //   const { success, instrumentResponse } = response.data;
-
-      //   if (success) {
-      //     window.location.href = instrumentResponse.redirectUrl;
-      //   } else {
-      //     alert('Payment initiation failed');
-      //   }
-      // } catch (error) {
-      //   alert('Error initiating payment');
-      // }      
-
-      // setLoading(false);
-
-
-      // e.preventDefault();
-
-        let res = await axiosInstance.post('/api/v1/orders/initiate-payment', { ...data }).then(res => {
-
-            console.log('1',res.data)
-            if (res.data && res.data.data.instrumentResponse.redirectInfo.url) {
-                window.location.href = res.data.data.instrumentResponse.redirectInfo.url;
-            }
-        })
-            .catch(error => {
-                console.error(error);
-            });
+        console.log('1', res.data)
+        if (res.data && res.data.data.instrumentResponse.redirectInfo.url) {
+          window.location.href = res.data.data.instrumentResponse.redirectInfo.url;
+        }
+      })
+        .catch(error => {
+          console.error(error);
+        });
     }
   };
 
