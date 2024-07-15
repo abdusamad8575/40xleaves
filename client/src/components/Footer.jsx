@@ -32,9 +32,9 @@ function Footer() {
           <Col md={4} className="mb-4">
             <h5 className="text-success">Contact</h5>
             <ul className="list-unstyled">
-              <li><a href="#" className="text-light">WhatsApp: +1234567890</a></li>
-              <li><a href="#" className="text-light">Email: example@example.com</a></li>
-              <li><a href="#" className="text-light">Address: 123 Main Street, City, State</a></li>
+              <li><a href="tel:7736225610" className="text-light">Call: +91 7736225610</a></li>
+              <li><a href="mailto:40xleaves@gmail.com" className="text-light">Email: 40xleaves@gmail.com</a></li>
+              <li><a href="https://maps.app.goo.gl/uc96wrTnx9wfqmhJA" className="text-light">Address: Avilunni Vilakath Veed,Narivanmood,Parambukkonam,Thirivananthapuram,695528</a></li>
             </ul>
           </Col>
         </Row>
