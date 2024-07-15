@@ -17,6 +17,7 @@ function Footer() {
               <li><Link to={'/privacypolicy'}  className="text-light">Privacy Policy</Link></li>
               <li><Link to={'/shippingpolicy'}  className="text-light">Shipping Policy</Link></li>
               <li><Link to={'/termsandcondition'}  className="text-light">Terms & Conditions</Link></li>
+              <li><Link to={'/refund-policy'}  className="text-light">Return & Refund policy</Link></li>
             </ul>
           </Col>
           <Col md={4} className="mb-4">
@@ -40,7 +41,7 @@ function Footer() {
         <hr className="bg-success" />
         <Row className="align-items-center">
           <Col className="text-center text-muted text-white ">
-            <p className="mb-0 text-white ">Copyright &copy; 40X Leaves {new Date().getFullYear()}  </p>
+            <p className="mb-0 text-white ">Copyright &copy; FORTY X LEAVES MICROGREENS PRIVATE LIMITED {new Date().getFullYear()}  </p>
             {/* <p className="mb-0 text-white ">Designed by <a href="https://www.acmeflare.in/" className="text-success">Acmeflare</a></p> */}
           </Col>
         </Row>

@@ -23,6 +23,7 @@ import store from './redux/store';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndCondition from './pages/TermsAndCondition';
 import ShippingPolicy from './pages/ShippingPolicy';
+import RefundPolicy from './pages/RefundPolicy';
 
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
       <Route path='/privacypolicy' element={<PrivacyPolicy/>}/>
       <Route path='/termsandcondition' element={<TermsAndCondition/>}/>
       <Route path='/shippingpolicy' element={<ShippingPolicy/>}/>
+      <Route path='/refund-policy' element={<RefundPolicy />}/>
       <Route path='*' element={<PageNotFound/>}/>
      </Routes>
  
