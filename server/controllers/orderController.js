@@ -166,11 +166,10 @@ const phonepeIntagretion = async (req, res) => {
     const sha256 = crypto.createHash('sha256').update(string).digest('hex');
     const checksum = sha256 + '###' + keyIndex;
 
-    // const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
+    const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
     // const prod_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
-    const prod_URL = "https://api.phonepe.com/apis/hermes"
 
-    const options = {
+    const options = {   
       method: 'POST',
       url: prod_URL,
       headers: {
@@ -178,7 +177,7 @@ const phonepeIntagretion = async (req, res) => {
         'Content-Type': 'application/json',
         'X-VERIFY': checksum
       },
-      data: {
+      data: {    
         request: payloadMain
       }
     };
@@ -199,7 +198,7 @@ const phonepeIntagretion = async (req, res) => {
     })
   }
 }
-const phonepeStatus = async (req, res) => {
+const phonepeStatus = async (req, res) => {   
 
   console.log('phonepeStatus');
   const merchantTransactionId = req.query.id
@@ -212,7 +211,8 @@ const phonepeStatus = async (req, res) => {
 
   const options = {
     method: 'GET',
-    url: `https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`,
+    // url: `https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`,
+    url: `https://api.phonepe.com/apis/hermes/pg/v1/status/${merchantId}/${merchantTransactionId}`,
     headers: {
       accept: 'application/json',
       'Content-Type': 'application/json',

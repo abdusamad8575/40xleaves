@@ -6,7 +6,7 @@ import Box from 'components/Box';
 
 const AuthLayout = ({ color, header, title, description, illustration, children }) => {
    return (
-      <Grid container>
+      <Grid container>   
          <Grid item xs={11} sm={8} md={6} lg={4} xl={3} sx={{ mx: "auto" }}>
             <Box display="flex" flexDirection="column" justifyContent="center" height="100vh">
                <Box pt={3} px={3}>

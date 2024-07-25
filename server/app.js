@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();      
 
 const app = express();  
-const corsOptions = {
+const corsOptions = {    
   origin: [process.env.CLIENT_PORT_LOCAL,process.env.ADMIN_PORT_LOCAL],
   credentials: true, 
 };
