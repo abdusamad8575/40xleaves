@@ -67,8 +67,8 @@ console.log('lim n',limitNumber)
     const products = await Product.find(query)
       .collation({ locale: 'en' }) // Enable case-insensitive search
       .sort(sortOptions)
-      .skip((pageNumber - 1) * limitNumber)
-      .limit(limitNumber);
+      // .skip((pageNumber - 1) * limitNumber)
+      // .limit(limitNumber);
     //const data = await Product.find()
     res.status(200).json({ data:products })
   } catch (error) {
@@ -146,8 +146,8 @@ console.log('lim n',limitNumber)
     const products = await Product.find(query)
       .collation({ locale: 'en' }) // Enable case-insensitive search
       .sort(sortOptions)
-      .skip((pageNumber - 1) * limitNumber)
-      .limit(limitNumber);
+      // .skip((pageNumber - 1) * limitNumber)
+      // .limit(limitNumber);
     //const data = await Product.find()
     res.status(200).json({ data:products })
   } catch (error) {
