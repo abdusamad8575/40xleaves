@@ -38,8 +38,9 @@ const getAdminOrders = async (req, res) => {
 const getUserOrders = async (req, res) => {
   try {
     const { _id } = req?.decoded
-    const data = await Order.find({ userId: _id }).populate('products.item.product_id') // Populate all fields in products
-      .populate('address'); // Populate all fields in address
+    const data = await Order.find({ userId: _id }).populate('products.item.product_id')
+      .populate('address')
+      .sort({ createdAt: -1 });
     res.status(200).json({ data })
   } catch (error) {
     console.log(error);
