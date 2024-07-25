@@ -111,7 +111,7 @@ export default function App() {
                 <Route path="/products/addProducts" element={<AddProduct />} />
                 <Route path="/products/editProduct/:id" element={<EditProduct />} />
                 <Route path="/orders/editOrder/:id" element={<EditOrder />} />
-                <Route path="*" element={<Navigate to="/dashboard" />} />
+                <Route path="*" element={<Navigate to="/orders" />} />
               </Routes>
               <Footer />
             </DashboardLayout>
@@ -144,7 +144,7 @@ export default function App() {
               <Route path="/orders/editOrder/:id" element={<EditOrder />} />
               <Route path="/banners/editBanner/:id" element={<EditBanner />} />
               <Route path="/blogs/editBlog/:id" element={<EditBlog />} />
-              <Route path="*" element={<Navigate to="/dashboard" />} />
+              <Route path="*" element={<Navigate to="/orders" />} />
             </Routes>
             <Footer />
           </DashboardLayout>
